@@ -1,0 +1,14 @@
+# .gitignore-Datei
+
+# Ignoriere den Ordner .ddev
+.ddev/
+
+# Ignoriere temporäre Dateien, die von deiner IDE oder deinem Betriebssystem erstellt wurden
+.DS_Store
+Thumbs.db
+
+# Ignoriere alle Dateien im Verzeichnis "logs"
+logs/*
+
+# Ignoriere alle Dateien im Verzeichnis "vendor"
+vendor/*
