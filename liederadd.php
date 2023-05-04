@@ -33,8 +33,8 @@ if (!isset($_SESSION["username"])) {
             <input type="text" class="form-control" id="autor" name="autor" required>
         </div>
         <div class="mb-3">
-            <label for="key" class="form-label">Tonart:</label>
-            <input type="text" class="form-control" id="key" name="key" required>
+            <label for="ton" class="form-label">Tonart:</label>
+            <input type="text" class="form-control" id="key" name="ton" required>
         </div>
         <button type="submit" class="btn btn-primary">Lied hinzufügen</button>
     </form>
@@ -46,13 +46,13 @@ if (!isset($_SESSION["username"])) {
             include 'datenbank.php';
 
             // Überprüfen, ob das Formular abgeschickt wurde
-            if (isset($_POST['name']) && isset($_POST['autor']) && isset($_POST['key'])) {
+            if (isset($_POST['name']) && isset($_POST['autor']) && isset($_POST['ton'])) {
                 $name = $_POST['name'];
                 $autor = $_POST['autor'];
-                $key = $_POST['key'];
+                $key = $_POST['ton'];
 
                 // SQL-Statement zum Einfügen des Lieds in die Datenbank
-                $sql = "INSERT INTO lieder (name, autor, key) VALUES ('$name', '$autor', '$key')";
+                $sql = "INSERT INTO lieder (name, autor, ton) VALUES ('$name', '$autor', '$ton')";
 
                 // Ausführen des SQL-Statements
                 if ($conn->query($sql) === TRUE) {
@@ -96,7 +96,7 @@ if (!isset($_SESSION["username"])) {
                     // Ausgeben der Lieder in der Tabelle
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        echo "<tr><td>" . $row["name"] . "</td><td>" . $row["autor"] . "</td><td>" . $row["key"] . "</td><td><form method='post' action=''><input type='hidden' name='id' value='" . $row["id"] . "'><button type='submit' class='btn btn-danger'>Löschen</button></form></td></tr>";
+        echo "<tr><td>" . $row["name"] . "</td><td>" . $row["autor"] . "</td><td>" . $row["ton"] . "</td><td><form method='post' action=''><input type='hidden' name='id' value='" . $row["id"] . "'><button type='submit' class='btn btn-danger'>Löschen</button></form></td></tr>";
     }
 } else {
     echo "<tr><td colspan='3'>Keine Lieder gefunden.</td></tr>";
