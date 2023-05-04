@@ -34,7 +34,7 @@ if (!isset($_SESSION["username"])) {
         </div>
         <div class="mb-3">
             <label for="ton" class="form-label">Tonart:</label>
-            <input type="text" class="form-control" id="key" name="ton" required>
+            <input type="text" class="form-control" id="ton" name="ton" required>
         </div>
         <button type="submit" class="btn btn-primary">Lied hinzufügen</button>
     </form>
@@ -116,4 +116,3 @@ if (isset($_POST['id'])) {
         echo "Fehler: " . $sql . "<br>" . $conn->error;
     }
 }
-
