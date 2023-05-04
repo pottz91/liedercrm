@@ -27,7 +27,7 @@ if (!isset($_SESSION["username"])) {
             <?php
         include 'datenbank.php';
 
-        $sql = "SELECT * FROM lieder";
+        $sql = "SELECT * FROM lieder ORDER by name ASC";
         $result = $conn->query($sql);
 
         if ($result->num_rows > 0) {
