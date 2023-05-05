@@ -37,10 +37,10 @@ if (!isset($_SESSION["username"])) {
 
         if ($result->num_rows > 0) {
             echo "<table class='table'>";
-            echo "<thead><tr><th>Name</th><th>Autor</th><th>Tonart</th></tr></thead>";
+            echo "<thead><tr><th>Name</th><th>Autor</th><th>Tonart</th><th>Datei</th></tr></thead>";
             echo "<tbody>";
             while($row = $result->fetch_assoc()) {
-                echo "<tr><td>" . $row["name"] . "</td><td>" . $row["autor"] . "</td><td>" . $row["ton"] . "</td></tr>";
+                echo "<tr><td>" . $row["name"] . "</td><td>" . $row["autor"] . "</td><td>" . $row["ton"] . "</td><td>" . $row["pdf_attachment"] . "</td></tr>";
             }
             echo "</tbody>";
             echo "</table>";
