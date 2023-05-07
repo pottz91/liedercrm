@@ -14,3 +14,23 @@ CREATE TABLE lieder (
     name VARCHAR(255) NOT NULL,
     autor VARCHAR(255) NOT NULL
 );
+
+
+
+// Erweiterung Liedertabelle:
+
+ALTER TABLE lieder
+ADD COLUMN ton VARCHAR(255),
+ADD COLUMN pdf_attachment BLOB;
+
+
+// Gesamter SQL Query Liedertabelle:
+
+CREATE TABLE lieder (
+    id INT NOT NULL AUTO_INCREMENT,
+    name VARCHAR(255),
+    autor VARCHAR(255),
+    ton VARCHAR(255),
+    pdf_attachment BLOB,
+    PRIMARY KEY (id)
+);

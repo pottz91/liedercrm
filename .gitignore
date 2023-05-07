@@ -6,7 +6,8 @@
 # Ignoriere temporäre Dateien, die von deiner IDE oder deinem Betriebssystem erstellt wurden
 .DS_Store
 Thumbs.db
-
+.datenbank.php
+datenbank.php
 # Ignoriere alle Dateien im Verzeichnis "logs"
 logs/*
 
