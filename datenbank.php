@@ -3,10 +3,10 @@
 // Das ist unsere Datenbank Connection
 
 // Verbindung zur Datenbank herstellen
-$servername = "localhost"; 
-$username = "root";
-$password = "";
-$dbname = "lieder";
+$servername = "db";
+$username = "db";
+$password = "db";
+$dbname = "db";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 
