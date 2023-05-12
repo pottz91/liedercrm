@@ -21,7 +21,7 @@ if (!isset($_SESSION["username"])) {
             <a href="lieder.php"><img src="img/book.svg"> Lieder</a>
             <a href="liederadd.php"><img src="img/add.svg"> Lieder hinzufügen</a>
             <a href="legal.php"><img src="img/legal.svg"> Impressum</a>
-            <a href="logout.php">Logout</a>
+            <a href="logout.php"><i style="font-size: 22px" class="ri-logout-box-r-line">&nbsp;</i>Logout</a>
         </div>
         <div class="content">
             <h1>Lieder</h1>

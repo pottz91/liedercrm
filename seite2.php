@@ -11,8 +11,7 @@ if (!isset($_SESSION["username"])) {
 
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Document</title>
 </head>
 
@@ -29,7 +28,8 @@ if (!isset($_SESSION["username"])) {
             <a href="lieder.php"><img src="img/book.svg"> Lieder</a>
             <a href="liederadd.php"><img src="img/add.svg"> Lieder hinzufügen</a>
             <a href="index.php?page=legal"><img src="img/legal.svg"> Impressum</a>
-            <a href="logout.php">Logout</a>
+            <a href="logout.php"><i style="font-size: 22px" class="ri-logout-box-r-line">&nbsp;</i>Logout</a>
+
         </div>
         <div class="content">
             <h1>Herzlich willkommen</h1>
