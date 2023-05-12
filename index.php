@@ -1,5 +1,5 @@
-<?php include 'header.php';?>
-<?php include 'datenbank.php';?>
+<?php include 'header.php'; ?>
+<?php include 'datenbank.php'; ?>
 
 <?php
 session_start();
@@ -23,11 +23,12 @@ if (isset($_GET["page"]) && $_GET["page"] === "log") {
         // Überprüfen, ob das Passwort korrekt ist
         if (password_verify($passwort, $row['passwort'])) {
             $_SESSION["username"] = $user;
-            header("Location: seite2.php");
+            echo '<script>window.location.href = "seite2.php";</script>';
             exit();
         } else {
             echo "Das eingegebene Passwort ist falsch!";
         }
+
     } else {
         echo "Der Benutzername wurde nicht gefunden!";
     }
@@ -35,16 +36,19 @@ if (isset($_GET["page"]) && $_GET["page"] === "log") {
 ?>
 
 <html>
+
 <head>
     <title>Login</title>
 </head>
+
 <body>
     <div class="container">
         Bitte logge dich ein:<br />
         <form method="post" action="index.php?page=log">
             <div class="mb-3">
                 <label for="exampleInputEmail1" class="form-label">Name</label>
-                <input type="text" class="form-control" name="user" id="exampleInputEmail1" aria-describedby="emailHelp">
+                <input type="text" class="form-control" name="user" id="exampleInputEmail1"
+                    aria-describedby="emailHelp">
                 <div id="emailHelp" class="form-text"></div>
             </div>
             <div class="mb-3">
