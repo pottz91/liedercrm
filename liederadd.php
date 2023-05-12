@@ -20,6 +20,7 @@ if (!isset($_SESSION["username"])) {
             <a href="lieder.php"><img src="img/book.svg"> Lieder</a>
             <a href="liederadd.php"><img src="img/add.svg"> Lieder hinzufügen</a>
             <a href="index.php?page=legal"><img src="img/legal.svg"> Impressum</a>
+            <a href="logout.php">Logout</a>
         </div>
         <div class="content">
             <h1>Lieder hinzufügen</h1>
