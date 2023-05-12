@@ -1,8 +1,8 @@
-<?php include 'header.php';?>
+<?php include 'header.php'; ?>
 
 <?php
 // Datenbankverbindung herstellen
-include('./datenbank.php');
+include('datenbank.php');
 
 // Überprüfen, ob das Formular abgeschickt wurde
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -51,11 +51,13 @@ $conn->close();
 
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registrierung</title>
 </head>
+
 <body>
     <div class="container">
         <h1>Registrierung</h1>
@@ -73,7 +75,8 @@ $conn->close();
                 <input type="password" class="form-control" id="passwort2" name="passwort2">
             </div>
             <button type="submit" class="btn btn-primary">Registrieren</button>
-            </form>
+        </form>
     </div>
 </body>
+
 </html>
