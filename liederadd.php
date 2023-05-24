@@ -130,19 +130,19 @@ if (!isset($_SESSION["username"])) {
                     $sql = "SELECT * FROM lieder";
                     $result = $conn->query($sql);
                     // Ausgeben der Lieder in der Tabelle
-                    if ($result->num_rows > 0) {
+                   if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
                             $pdfPath = 'pdf/' . $row["pdf_attachment"];
-                            echo "<tr><td>" . $row["name"] . "</td><td>" . $row["autor"] . "</td><td>" . $row["ton"] . "</td><td><a href='$pdfPath' target='_blank' class='btn btn-primary'>PDF öffnen</a>
-                            </td><td><form method='post' action=''><input type='hidden' name='id' value='" . $row["id"] . "'><input type='hidden' name='action' value='delete'><button type='submit' class='btn btn-danger'>Löschen</button></form><td>
-   
-                        </td></td></tr>";
+                            $pdfButton = '';
+                            if (!empty($row["pdf_attachment"])) {
+                                $pdfButton = "<a href='$pdfPath' target='_blank' class='btn btn-primary'>PDF öffnen</a>";
+                            }
+                            echo "<tr><td>" . $row["name"] . "</td><td>" . $row["autor"] . "</td><td>" . $row["ton"] . "</td><td>$pdfButton</td><td><form method='post' action=''><input type='hidden' name='id' value='" . $row["id"] . "'><input type='hidden' name='action' value='delete'><button type='submit' class='btn btn-danger'>Löschen</button></form></td></tr>";
                         }
                     } else {
                         echo "<tr><td colspan='5'>Keine Lieder gefunden.</td></tr>";
                     }
                     ?>
-
 
                 </tbody>
             </table>
