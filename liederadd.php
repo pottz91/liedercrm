@@ -142,6 +142,7 @@ if (!isset($_SESSION["username"])) {
                     } else {
                         echo "<tr><td colspan='5'>Keine Lieder gefunden.</td></tr>";
                     }
+                    
                     ?>
 
                 </tbody>
