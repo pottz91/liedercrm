@@ -30,6 +30,27 @@ if (!isset($_SESSION["username"])) {
             if (isset($_POST['id'])) {
                 $id = $_POST['id'];
 
+                // Überprüfen, ob das Formular zum Aktualisieren des Datensatzes gesendet wurde
+                if (isset($_POST['action']) && $_POST['action'] === 'update') {
+                    echo "Der Datensatz wurde erfolgreich aktualisiert.";
+                    header("Location: lieder.php");
+                    exit();
+                    
+                    // Die Werte aus dem Formular abrufen
+                    $name = $_POST['name'];
+                    $autor = $_POST['autor'];
+                    $ton = $_POST['ton'];
+
+                    // Code zum Aktualisieren des Datensatzes in der Datenbank
+                    $updateSql = "UPDATE lieder SET name = '$name', autor = '$autor', ton = '$ton' WHERE id = '$id'";
+                    if ($conn->query($updateSql) === TRUE) {
+                        echo "Der Datensatz wurde erfolgreich aktualisiert.";
+                    } else {
+                        echo "Beim Aktualisieren des Datensatzes ist ein Fehler aufgetreten: " . $conn->error;
+                    }
+                }
+
+
                 // Datenbankabfrage, um den zu bearbeitenden Datensatz abzurufen
                 $sql = "SELECT * FROM lieder WHERE id = '$id'";
                 $result = $conn->query($sql);
@@ -39,7 +60,7 @@ if (!isset($_SESSION["username"])) {
                     $row = $result->fetch_assoc();
 
                     // Das Formular zum Bearbeiten des Datensatzes anzeigen
-                    echo '<h2>Lied-Datensatz bearbeiten</h2>
+                    echo '<h2>Lied - Datensatz bearbeiten</h2>
             <form method="post" action="" enctype="multipart/form-data">
                 <div class="mb-3">
                     <label for="name" class="form-label">Name:</label>
@@ -59,12 +80,12 @@ if (!isset($_SESSION["username"])) {
                 </div>
                 <input type="hidden" name="id" value="' . $row["id"] . '">
                 <input type="hidden" name="action" value="update">
-                <button type="submit" class="btn btn-primary">Lied aktualisieren</button>
-            </form>
-                <form method="post" action="" onsubmit="return confirmDelete();">
+                <button type="submit" class="btn btn-primary" style="margin-right: 10px;">Aktualisieren</button>
+                <form method="post" action="" onsubmit="return confirmDelete();" style="display: inline-block;">
                     <!-- Rest des Formulars -->
                     <input type="hidden" name="id" value="' . $row["id"] . '">
-                    <button type="submit" name="delete" class="btn btn-danger">Lied löschen</button>
+                    <button type="submit" name="delete" class="btn btn-danger">Löschen</button>
+                </form>
                 </form>
                 <script>
                     function confirmDelete() {
@@ -72,14 +93,21 @@ if (!isset($_SESSION["username"])) {
                     }
                 </script>';
         
-                    // Code zum Löschen des Datensatzes aus der Datenbank
                     if (isset($_POST['delete'])) {
-                        $deleteId = $_POST['id'];
-                        $deleteSql = "DELETE FROM lieder WHERE id = '$deleteId'";
-                        if ($conn->query($deleteSql) === TRUE) {
-                            echo "Der Datensatz wurde erfolgreich gelöscht.";
+                        // Bestätigung zum Löschen des Datensatzes
+                        if (confirmDelete()) {
+                            // Code zum Löschen des Datensatzes aus der Datenbank
+                            $deleteId = $_POST['id'];
+                            $deleteSql = "DELETE FROM lieder WHERE id = '$deleteId'";
+                            if ($conn->query($deleteSql) === TRUE) {
+                                echo "Der Datensatz wurde erfolgreich gelöscht.";
+                                header("Location: lieder.php");
+                                exit();
+                            } else {
+                                echo "Beim Löschen des Datensatzes ist ein Fehler aufgetreten: " . $conn->error;
+                            }
                         } else {
-                            echo "Beim Löschen des Datensatzes ist ein Fehler aufgetreten: " . $conn->error;
+                            echo "Das Löschen wurde abgebrochen.";
                         }
                     }
                 } else {
