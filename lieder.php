@@ -1,6 +1,6 @@
-<?php include 'header.php'; ?>
-<?php include 'datenbank.php'; ?>
 <?php
+include 'header.php';
+include 'datenbank.php';
 session_start();
 if (!isset($_SESSION["username"])) {
     header("Location: index.php");
@@ -42,7 +42,14 @@ if (!isset($_SESSION["username"])) {
                 echo "<thead><tr><th>Name</th><th>Autor</th><th>Tonart</th><th>Datei</th></tr></thead>";
                 echo "<tbody>";
                 while ($row = $result->fetch_assoc()) {
-                    echo "<tr><td>" . $row["name"] . "</td><td>" . $row["autor"] . "</td><td>" . $row["ton"] . "</td><td>" . $row["pdf_attachment"] . "</td></tr>";
+                    echo "<tr><td>" . $row["name"] . "</td><td>" . $row["autor"] . "</td><td>" . $row["ton"] . "</td><td>";
+                    if (!empty($row["pdf_attachment"])) {
+                        $pdfPath = $row["pdf_attachment"];
+                        echo "<a href='$pdfPath' target='_blank' class='btn btn-primary'>PDF öffnen</a>";
+                    } else {
+                        echo "-";
+                    }
+                    echo "</td></tr>";
                 }
                 echo "</tbody>";
                 echo "</table>";
