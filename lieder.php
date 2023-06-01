@@ -1,11 +1,7 @@
 <?php
 include 'header.php';
 include 'datenbank.php';
-session_start();
-if (!isset($_SESSION["username"])) {
-    header("Location: index.php");
-    exit();
-}
+include 'auth.php';
 ?>
 
 <body>

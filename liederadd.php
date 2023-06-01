@@ -1,10 +1,7 @@
-<?php include 'header.php'; ?>
 <?php
-session_start();
-if (!isset($_SESSION["username"])) {
-    header("Location: index.php");
-    exit();
-}
+include 'header.php';
+include 'datenbank.php';
+include 'auth.php';
 ?>
 
 <body>
@@ -27,9 +24,9 @@ if (!isset($_SESSION["username"])) {
             <h1>Lieder hinzufügen</h1>
             <p>Du bist auf der Lieder hinzufügen Seite</p>
             <?php
-include 'datenbank.php';
+            include 'datenbank.php';
 
-echo '<form method="post" action="" enctype="multipart/form-data">
+            echo '<form method="post" action="" enctype="multipart/form-data">
     <div class="mb-3">
         <label for="name" class="form-label">Name:</label>
         <input type="text" class="form-control" id="name" name="name" required>
@@ -50,68 +47,68 @@ echo '<form method="post" action="" enctype="multipart/form-data">
     <button type="submit" class="btn btn-primary">Lied hinzufügen</button>
 </form>';
 
-// Überprüfen, ob das Formular abgeschickt wurde
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST['action']) && $_POST['action'] == 'add') {
-        // Hinzufügen eines neuen Datensatzes
-        $name = isset($_POST["name"]) ? $_POST["name"] : "";
-        $autor = isset($_POST["autor"]) ? $_POST["autor"] : "";
-        $ton = isset($_POST["ton"]) ? $_POST["ton"] : "";
+            // Überprüfen, ob das Formular abgeschickt wurde
+            if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                if (isset($_POST['action']) && $_POST['action'] == 'add') {
+                    // Hinzufügen eines neuen Datensatzes
+                    $name = isset($_POST["name"]) ? $_POST["name"] : "";
+                    $autor = isset($_POST["autor"]) ? $_POST["autor"] : "";
+                    $ton = isset($_POST["ton"]) ? $_POST["ton"] : "";
 
-        // Datei-Upload
-        if (isset($_FILES['pdf_attachment'])) {
-            $target_dir = "pdf/";
-            $target_file = $target_dir . basename($_FILES["pdf_attachment"]["name"]);
-            $uploadOk = 1;
-            $fileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+                    // Datei-Upload
+                    if (isset($_FILES['pdf_attachment'])) {
+                        $target_dir = "pdf/";
+                        $target_file = $target_dir . basename($_FILES["pdf_attachment"]["name"]);
+                        $uploadOk = 1;
+                        $fileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
-            // Überprüfen, ob die Datei ein echtes PDF ist
-            $finfo = finfo_open(FILEINFO_MIME_TYPE);
-            $mime = finfo_file($finfo, $_FILES['pdf_attachment']['tmp_name']);
-            if ($mime != 'application/pdf') {
-                echo "Die Datei ist kein PDF.";
-                $uploadOk = 0;
-            }
+                        // Überprüfen, ob die Datei ein echtes PDF ist
+                        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                        $mime = finfo_file($finfo, $_FILES['pdf_attachment']['tmp_name']);
+                        if ($mime != 'application/pdf') {
+                            echo "Die Datei ist kein PDF.";
+                            $uploadOk = 0;
+                        }
 
-            // Überprüfen, ob $uploadOk aufgrund eines Fehlers auf 0 gesetzt ist
-            if ($uploadOk == 0) {
-                echo "Die Datei wurde nicht hochgeladen.";
-            } else {
-                if (move_uploaded_file($_FILES["pdf_attachment"]["tmp_name"], $target_file)) {
-                    echo "Die Datei " . htmlspecialchars(basename($_FILES["pdf_attachment"]["name"])) . " wurde erfolgreich hochgeladen.";
-                    $pdf_filename = basename($_FILES["pdf_attachment"]["name"]);
+                        // Überprüfen, ob $uploadOk aufgrund eines Fehlers auf 0 gesetzt ist
+                        if ($uploadOk == 0) {
+                            echo "Die Datei wurde nicht hochgeladen.";
+                        } else {
+                            if (move_uploaded_file($_FILES["pdf_attachment"]["tmp_name"], $target_file)) {
+                                echo "Die Datei " . htmlspecialchars(basename($_FILES["pdf_attachment"]["name"])) . " wurde erfolgreich hochgeladen.";
+                                $pdf_filename = basename($_FILES["pdf_attachment"]["name"]);
 
-                    // SQL-Statement zum Einfügen des neuen Lieds in die Datenbank
-                    $sql = "INSERT INTO lieder (name, autor, ton, pdf_attachment) VALUES ('$name', '$autor', '$ton', '$pdf_filename')";
+                                // SQL-Statement zum Einfügen des neuen Lieds in die Datenbank
+                                $sql = "INSERT INTO lieder (name, autor, ton, pdf_attachment) VALUES ('$name', '$autor', '$ton', '$pdf_filename')";
 
-                    // Ausführen des SQL-Statements
-                    if ($conn->query($sql) === TRUE) {
-                        echo "<p>Lied wurde erfolgreich hinzugefügt.</p>";
-                    } else {
-                        echo "Fehler: " . $sql . "<br>" . $conn->error;
+                                // Ausführen des SQL-Statements
+                                if ($conn->query($sql) === TRUE) {
+                                    echo "<p>Lied wurde erfolgreich hinzugefügt.</p>";
+                                } else {
+                                    echo "Fehler: " . $sql . "<br>" . $conn->error;
+                                }
+                            } elseif (isset($_POST['action']) && $_POST['action'] == 'delete') {
+                                $id = isset($_POST["id"]) ? $_POST["id"] : null;
+                            }
+                        }
                     }
-                } elseif (isset($_POST['action']) && $_POST['action'] == 'delete') {
-                    $id = isset($_POST["id"]) ? $_POST["id"] : null;
                 }
             }
-        }
-    }
-}
-// Überprüfen, ob das Formular abgeschickt wurde
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST['action']) && $_POST['action'] == 'edit') {
-        $id = isset($_POST["id"]) ? $_POST["id"] : null;
-        
-        // Datenbankabfrage, um den zu bearbeitenden Datensatz abzurufen
-        $sql = "SELECT * FROM lieder WHERE id = '$id'";
-        $result = $conn->query($sql);
-        
-        // Überprüfen, ob ein Datensatz gefunden wurde
-        if ($result->num_rows > 0) {
-            $row = $result->fetch_assoc();
-            
-            // Das Formular zum Bearbeiten des Datensatzes anzeigen
-            echo '<h2>Lied bearbeiten</h2>
+            // Überprüfen, ob das Formular abgeschickt wurde
+            if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                if (isset($_POST['action']) && $_POST['action'] == 'edit') {
+                    $id = isset($_POST["id"]) ? $_POST["id"] : null;
+
+                    // Datenbankabfrage, um den zu bearbeitenden Datensatz abzurufen
+                    $sql = "SELECT * FROM lieder WHERE id = '$id'";
+                    $result = $conn->query($sql);
+
+                    // Überprüfen, ob ein Datensatz gefunden wurde
+                    if ($result->num_rows > 0) {
+                        $row = $result->fetch_assoc();
+
+                        // Das Formular zum Bearbeiten des Datensatzes anzeigen
+                        echo '<h2>Lied bearbeiten</h2>
                 <form method="post" action="" enctype="multipart/form-data">
                     <div class="mb-3">
                         <label for="name" class="form-label">Name:</label>
@@ -133,11 +130,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <input type="hidden" name="action" value="update">
                     <button type="submit" class="btn btn-primary">Lied aktualisieren</button>
                 </form>';
-        } else {
-            echo "<p>Der Datensatz konnte nicht gefunden werden.</p>";
-        }
-    }
-}
+                    } else {
+                        echo "<p>Der Datensatz konnte nicht gefunden werden.</p>";
+                    }
+                }
+            }
 
             ?>
             <h2>Liederliste</h2>

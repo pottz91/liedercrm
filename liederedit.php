@@ -1,28 +1,7 @@
 <?php
 include 'header.php';
 include 'datenbank.php';
-session_start();
-if (!isset($_SESSION["username"])) {
-    header("Location: index.php");
-    exit();
-}
-
-// Überprüfen, ob eine Lied-ID übergeben wurde
-if (isset($_GET["id"])) {
-    $lied_id = $_GET["id"];
-
-    // SQL-Statement zum Abrufen des vorhandenen Lieds aus der Datenbank
-    $sql = "SELECT * FROM lieder WHERE id = $lied_id";
-    $result = $conn->query($sql);
-
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        $name = $row["name"];
-        $autor = $row["autor"];
-        $ton = $row["ton"];
-        $pdf_attachment = $row["pdf_attachment"];
-    }
-}
+include 'auth.php';
 ?>
 
 <body>

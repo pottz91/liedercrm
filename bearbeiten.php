@@ -1,11 +1,7 @@
-<?php include 'header.php'; ?>
-<?php include 'datenbank.php'; ?>
 <?php
-session_start();
-if (!isset($_SESSION["username"])) {
-    header("Location: index.php");
-    exit();
-}
+include 'header.php';
+include 'datenbank.php';
+include 'auth.php';
 ?>
 
 <body>
@@ -35,7 +31,7 @@ if (!isset($_SESSION["username"])) {
                     echo "Der Datensatz wurde erfolgreich aktualisiert.";
                     header("Location: lieder.php");
                     exit();
-                    
+
                     // Die Werte aus dem Formular abrufen
                     $name = $_POST['name'];
                     $autor = $_POST['autor'];
@@ -92,7 +88,7 @@ if (!isset($_SESSION["username"])) {
                         return confirm("Willst Du dieses Lied endgültig aus der Datenbank löschen?");
                     }
                 </script>';
-        
+
                     if (isset($_POST['delete'])) {
                         // Bestätigung zum Löschen des Datensatzes
                         if (confirmDelete()) {

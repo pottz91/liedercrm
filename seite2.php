@@ -1,19 +1,8 @@
 <?php
 include 'header.php';
-session_start();
-if (!isset($_SESSION["username"])) {
-    header("Location: index.php");
-    exit();
-}
+include_once 'datenbank.php';
+include 'auth.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-
-    <title>Document</title>
-</head>
 
 <body>
     <div class="menubar">
@@ -40,5 +29,3 @@ if (!isset($_SESSION["username"])) {
         (C) 2023 Visio Software
     </div>
 </body>
-
-</html>
