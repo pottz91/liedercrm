@@ -141,12 +141,15 @@ include 'auth.php';
                                             <div class="dropdown-divider"></div>
                                             <a class="dropdown-item" href="#">Something else here</a>
                                         </div>
+
                                     </div>
+
                                 </div>
+
                                 <!-- Card Body -->
                                 <div class="card-body">
                                     <div class="chart-area">
-                                        <canvas id="myAreaChart"></canvas>
+
                                     </div>
                                 </div>
                             </div>
@@ -183,7 +186,7 @@ include 'auth.php';
     <script>
         <?php
         // SQL-Abfrage ausführen, um die Liederdaten zu erhalten
-        $sql = "SELECT COUNT(*) as count FROM lieder";
+        $sql = "SELECT DATE_FORMAT(hinzugefuegt_am, '%Y-%m-%d') AS datum, COUNT(*) AS anzahl FROM lieder GROUP BY datum";
         $result = $conn->query($sql);
 
         // Überprüfen, ob die Abfrage erfolgreich war
@@ -193,11 +196,10 @@ include 'auth.php';
 
         // Daten für das Diagramm erstellen
         $chartData = array();
-        if ($result->num_rows > 0) {
-            $row = $result->fetch_assoc();
+        while ($row = $result->fetch_assoc()) {
             $chartData[] = array(
-                "x" => "Gesamt",
-                "y" => $row["count"]
+                "x" => $row["datum"],
+                "y" => $row["anzahl"]
             );
         }
 
@@ -209,26 +211,40 @@ include 'auth.php';
         ?>
 
         // ApexCharts initialisieren
-        const options = {
-            chart: {
-                type: 'line'
-            },
-            series: [{
-                name: 'Anzahl der Lieder',
-                data: chartData
-            }],
-            xaxis: {
-                categories: ['Gesamt']
-            },
-            stroke: {
-                curve: 'smooth',
-                colors: ['#576bcc'] // Hier wird die Farbe der Linie auf Blau gesetzt
-            },
-            fill: {
-                colors: ['#576bcc'] // Hier wird die Farbe des Bereichs unter der Linie auf Blau gesetzt
-            },
-        };
+        document.addEventListener("DOMContentLoaded", function () {
+            if (chartData.length > 0) {
+                const options = {
+                    chart: {
+                        type: 'line',
+                        height: 350,
+                        toolbar: {
+                            show: false
+                        }
+                    },
+                    series: [{
+                        name: 'Anzahl der Lieder',
+                        data: chartData
+                    }],
+                    xaxis: {
+                        type: 'category', // Achsentyp auf 'category' ändern
+                        labels: {
+                            format: 'dd.MM.yyyy'
+                        }
+                    },
+                    stroke: {
+                        curve: 'smooth',
+                        colors: ['#576bcc'] // Hier wird die Farbe der Linie auf Blau gesetzt
+                    },
+                    fill: {
+                        colors: ['#576bcc'] // Hier wird die Farbe des Bereichs unter der Linie auf Blau gesetzt
+                    },
+                };
 
-        const chart = new ApexCharts(document.querySelector('#chart'), options);
-        chart.render();
+                const chart = new ApexCharts(document.querySelector('#chart'), options);
+                chart.render();
+            } else {
+                console.error("Keine Daten für das Diagramm vorhanden.");
+            }
+        });
+        console.log(chartData);
     </script>
