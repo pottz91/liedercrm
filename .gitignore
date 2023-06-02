@@ -15,3 +15,5 @@ vendor/*
 
 # Ignoriere die Datei "datenbank.php"
 datenbank.php
+
+.pdf/
