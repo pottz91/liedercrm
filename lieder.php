@@ -51,12 +51,12 @@ include 'auth.php';
                             }
                         }
 
-                        $sql = "SELECT * FROM lieder ORDER BY name ASC";
+                        $sql = "SELECT id, name, autor, ton, pdf_attachment, DATE_FORMAT(hinzugefuegt_am, '%d.%m.%Y') AS hinzugefuegt_am FROM lieder ORDER BY name ASC";
                         $result = $conn->query($sql);
 
                         if ($result->num_rows > 0) {
                             echo "<table class='table'>";
-                            echo "<thead><tr><th>Name</th><th>Autor</th><th>Tonart</th><th>Datei</th><th>Aktionen</th></tr></thead>";
+                            echo "<thead><tr><th>Name</th><th>Autor</th><th>Tonart</th><th>Datei</th><th>Aktionen</th><th>Datum</th></tr></thead>";
                             echo "<tbody>";
                             while ($row = $result->fetch_assoc()) {
                                 echo "<tr>";
@@ -77,12 +77,13 @@ include 'auth.php';
                                             <button type='submit' class='btn btn-danger'>Löschen</button>
                                         </form>
                                       </td>";
+                                echo "<td>" . $row["hinzugefuegt_am"] . "</td>";
                                 echo "</tr>";
                             }
                             echo "</tbody>";
                             echo "</table>";
                         } else {
-                            echo "Keine Lieder gefunden";
+                            echo "Keine Lieder gefunden.";
                         }
                         $conn->close();
                         ?>
