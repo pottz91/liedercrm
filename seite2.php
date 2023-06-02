@@ -269,7 +269,7 @@ $conn->close();
             if (chartData.length > 0) {
                 const options = {
                     chart: {
-                        type: 'line',
+                        type: 'area',
                         height: 350,
                         toolbar: {
                             show: false
