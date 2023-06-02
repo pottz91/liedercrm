@@ -52,11 +52,20 @@ include 'auth.php';
 
                                     </form>
                                     <hr>
+
                                     <div class="text-center">
                                         <a class="small" href="forgot-password.html">Passwort vergessen?</a>
                                     </div>
                                     <div class="text-center">
                                         <a class="small" href="register.html">Ein Konto erstellen!</a>
+                                    </div>
+                                    <hr>
+                                    <div class="text-center" style="font-size:12px">
+                                        <i>Denn wenn du mit deinem Munde bekennst, dass Jesus der Herr ist, und glaubst
+                                            in
+                                            deinem Herzen, dass ihn Gott von den Toten auferweckt hat, so wirst du
+                                            gerettet.
+                                            Römer 10:9</i>
                                     </div>
                                 </div>
                             </div>
