@@ -137,7 +137,7 @@ include 'header.php';
                                 accept="application/pdf" required>
                         </div>
                         <div class="mb-3">
-                            <label for="hinzugefuegt_am" class="form-label">Hinzugefügt am:</label>
+                            <label for="hinzugefuegt_am" class="form-label">Wird gespielt am:</label>
                             <input type="datetime-local" class="form-control" id="hinzugefuegt_am"
                                 name="hinzugefuegt_am">
                         </div>
@@ -170,7 +170,7 @@ include 'header.php';
                                     <p><strong>Autor:</strong> {$row["autor"]}</p>
                                     <p><strong>Tonart:</strong> {$row["ton"]}</p>
                                     <p>$pdfButton</p>
-                                    <p><strong>Hinzugefügt am:</strong> {$row["hinzugefuegt_am_deutsch"]}</p>
+                                    <p><strong>Wird gespielt am:</strong> {$row["hinzugefuegt_am_deutsch"]}</p>
                                   </div>";
                             echo "<hr class='lied-separator'>";
                         }
