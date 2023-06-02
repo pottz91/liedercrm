@@ -41,8 +41,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
             }
 
+            $hinzugefuegt_am = isset($_POST["hinzugefuegt_am"]) ? $_POST["hinzugefuegt_am"] : date("Y-m-d H:i:s");
+
             // SQL-Statement zum Hinzufügen des Lieds in die Datenbank
-            $sql = "INSERT INTO lieder (name, autor, ton, pdf_attachment, hinzugefuegt_am) VALUES ('$name', '$autor', '$ton', '$pdf_attachment', NOW())";
+            $sql = "INSERT INTO lieder (name, autor, ton, pdf_attachment, hinzugefuegt_am) VALUES ('$name', '$autor', '$ton', '$pdf_attachment', '$hinzugefuegt_am')";
 
             if ($conn->query($sql) === TRUE) {
                 echo "<p>Lied wurde erfolgreich hinzugefügt.</p>";
@@ -134,127 +136,64 @@ include 'header.php';
                             <input type="file" class="form-control" id="pdf_attachment" name="pdf_attachment"
                                 accept="application/pdf" required>
                         </div>
+                        <div class="mb-3">
+                            <label for="hinzugefuegt_am" class="form-label">Hinzugefügt am:</label>
+                            <input type="datetime-local" class="form-control" id="hinzugefuegt_am"
+                                name="hinzugefuegt_am">
+                        </div>
                         <input type="hidden" name="action" value="add">
                         <button type="submit" class="btn btn-primary">Lied hinzufügen</button>
                     </form>
 
                     <h2>Liederliste</h2>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Autor</th>
-                                <th>Tonart</th>
-                                <th>Datei</th>
-                                <th>Aktionen</th>
-                                <th>Datum</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                            // SQL-Statement zum Abrufen der Lieder aus der Datenbank mit deutschem Datums- und Uhrzeitformat
-                            $sql = "SELECT id, name, autor, ton, pdf_attachment, DATE_FORMAT(STR_TO_DATE(hinzugefuegt_am, '%Y-%m-%d %H:%i:%s'), '%d.%m.%Y %H:%i') AS hinzugefuegt_am_deutsch FROM lieder";
-                            $result = $conn->query($sql);
+                    <?php
+                    // SQL-Statement zum Abrufen der Lieder aus der Datenbank mit deutschem Datums- und Uhrzeitformat
+                    $sql = "SELECT id, name, autor, ton, pdf_attachment, DATE_FORMAT(STR_TO_DATE(hinzugefuegt_am, '%Y-%m-%d %H:%i:%s'), '%d.%m.%Y') AS hinzugefuegt_am_deutsch FROM lieder ORDER BY hinzugefuegt_am DESC";
+                    $result = $conn->query($sql);
 
-                            // Überprüfen, ob Zeilen in der Abfrageergebnismenge vorhanden sind
-                            if ($result->num_rows > 0) {
-                                while ($row = $result->fetch_assoc()) {
-                                    $pdfPath = 'pdf/' . $row["pdf_attachment"];
-                                    $pdfButton = '';
+                    // Überprüfen, ob Zeilen in der Abfrageergebnismenge vorhanden sind
+                    if ($result->num_rows > 0) {
+                        while ($row = $result->fetch_assoc()) {
+                            $pdfPath = 'pdf/' . $row["pdf_attachment"];
+                            $pdfButton = '';
 
-                                    // Überprüfen, ob ein PDF-Anhang vorhanden ist
-                                    if (!empty($row["pdf_attachment"])) {
-                                        $pdfButton = "<a href='$pdfPath' target='_blank' class='btn btn-primary'>PDF öffnen</a>";
-                                    }
-
-                                    echo "<tr>
-        <td>" . $row["name"] . "</td>
-        <td>" . $row["autor"] . "</td>
-        <td>" . $row["ton"] . "</td>
-        <td>$pdfButton</td>
-        <td>
-            <button type='button' class='btn btn-warning' data-bs-toggle='modal' data-bs-target='#editModal' data-id='" . $row["id"] . "' data-name='" . $row["name"] . "' data-autor='" . $row["autor"] . "' data-ton='" . $row["ton"] . "' data-pdf='" . $row["pdf_attachment"] . "'>Bearbeiten</button>
-        </td>
-        <td>" . $row["hinzugefuegt_am_deutsch"] . "</td>
-    </tr>";
-                                }
-                            } else {
-                                echo "<tr><td colspan='5'>Keine Lieder gefunden.</td></tr>";
+                            // Überprüfen, ob ein PDF-Anhang vorhanden ist
+                            if (!empty($row["pdf_attachment"])) {
+                                $pdfButton = "<a href='$pdfPath' target='_blank' class='btn btn-primary'>PDF öffnen</a>";
                             }
-                            ?>
 
-                        </tbody>
-                    </table>
+                            $currentDate = date("d.m.Y");
+                            $liedClass = ($row["hinzugefuegt_am_deutsch"] == $currentDate) ? "current-lied" : "";
 
-                    <!-- Modal für die Bearbeitung -->
-                    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel"
-                        aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="editModalLabel">Lied bearbeiten</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <form id="editForm" method="post" enctype="multipart/form-data">
-                                        <div class="mb-3">
-                                            <label for="editName" class="form-label">Name:</label>
-                                            <input type="text" class="form-control" id="editName" name="editName"
-                                                required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="editAutor" class="form-label">Autor:</label>
-                                            <input type="text" class="form-control" id="editAutor" name="editAutor"
-                                                required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="editTon" class="form-label">Tonart:</label>
-                                            <input type="text" class="form-control" id="editTon" name="editTon"
-                                                required>
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="editPdfAttachment" class="form-label">PDF-Anhang:</label>
-                                            <input type="file" class="form-control" id="editPdfAttachment"
-                                                name="editPdfAttachment" accept="application/pdf">
-                                            <input type="hidden" id="editPdfAttachmentExisting"
-                                                name="editPdfAttachmentExisting">
-                                        </div>
-                                        <input type="hidden" id="editId" name="editId">
-                                        <input type="hidden" name="action" value="edit">
-                                        <button type="submit" class="btn btn-primary">Lied aktualisieren</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                            echo "<div class='lied-container $liedClass'>
+                                    <h3>{$row["name"]}</h3>
+                                    <p><strong>Autor:</strong> {$row["autor"]}</p>
+                                    <p><strong>Tonart:</strong> {$row["ton"]}</p>
+                                    <p>$pdfButton</p>
+                                    <p><strong>Hinzugefügt am:</strong> {$row["hinzugefuegt_am_deutsch"]}</p>
+                                  </div>";
+                            echo "<hr class='lied-separator'>";
+                        }
+                    } else {
+                        echo "<p>Keine Lieder gefunden.</p>";
+                    }
+                    ?>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <script>
-        // Modal öffnen und Liedinformationen setzen
-        var editModal = document.getElementById('editModal');
-        editModal.addEventListener('show.bs.modal', function (event) {
-            // Auslösendes Element abrufen
-            var button = event.relatedTarget;
+<style>
+    .current-lied {
+        background-color: #c8e6c9;
+        padding: 10px;
+        border-radius: 5px;
+    }
 
-            // Liedinformationen aus den Datenattributen des Elements abrufen
-            var id = button.getAttribute('data-id');
-            var name = button.getAttribute('data-name');
-            var autor = button.getAttribute('data-autor');
-            var ton = button.getAttribute('data-ton');
-            var pdf = button.getAttribute('data-pdf');
-
-            // Liedinformationen im Modal setzen
-            var editForm = document.getElementById('editForm');
-            editForm.setAttribute('action', 'liederadd.php');
-            document.getElementById('editId').value = id;
-            document.getElementById('editName').value = name;
-            document.getElementById('editAutor').value = autor;
-            document.getElementById('editTon').value = ton;
-            document.getElementById('editPdfAttachmentExisting').value = pdf;
-        });
-    </script>
-    </body>
+    .lied-separator {
+        border-top: 1px solid #ddd;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+</style>
