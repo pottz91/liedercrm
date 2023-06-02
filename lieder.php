@@ -65,18 +65,18 @@ include 'auth.php';
                                 echo "<td>" . $row["ton"] . "</td>";
                                 echo "<td>";
                                 if (!empty($row["pdf_attachment"])) {
-                                    $pdfPath = $row["pdf_attachment"];
+                                    $pdfPath = "pdf/" . $row["pdf_attachment"];
                                     echo "<a href='$pdfPath' target='_blank' class='btn btn-primary'>PDF öffnen</a>";
                                 } else {
                                     echo "-";
                                 }
                                 echo "</td>";
                                 echo "<td>
-                                        <form method='post' action='lieder.php' onsubmit='return confirm(\"Möchtest du dieses Lied wirklich löschen?\");'>
+                                        <form method='post' action='lieder.php' onsubmit='return confirm(\"Möchtest du dieses Lied wirklich löschen?\")'>
                                             <input type='hidden' name='lied_id' value='" . $row["id"] . "'>
                                             <button type='submit' class='btn btn-danger'>Löschen</button>
                                         </form>
-                                      </td>";
+                                    </td>";
                                 echo "<td>" . $row["hinzugefuegt_am"] . "</td>";
                                 echo "</tr>";
                             }
