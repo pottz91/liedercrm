@@ -5,6 +5,34 @@ include 'auth.php';
 ?>
 
 
+<?php
+include 'datenbank.php';
+
+// SQL-Abfrage ausführen, um die Liederdaten zu erhalten
+$sql = "SELECT name, hinzugefuegt_am FROM lieder ORDER BY hinzugefuegt_am";
+$result = $conn->query($sql);
+
+// Überprüfen, ob die Abfrage erfolgreich war
+if ($result === false) {
+    die("Datenbankabfrage fehlgeschlagen: " . $conn->error);
+}
+
+// Daten für die Liste erstellen
+$listItems = "";
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $datum = date("d.m.Y", strtotime($row["hinzugefuegt_am"]));
+        $class = ($datum == date("d.m.Y")) ? "text-success" : ""; // Hervorhebung für das aktuelle Datum
+        $listItems .= "<li class='py-2 {$class}'>" . $row["name"] . " - " . $datum . "</li>";
+        $listItems .= "<hr class='my-2'>"; // Trennstrich
+    }
+} else {
+    $listItems = "<li>Keine Daten vorhanden.</li>";
+}
+
+// Datenbankverbindung schließen
+$conn->close();
+?>
 
 
 <body id="page-top">
@@ -57,6 +85,9 @@ include 'auth.php';
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                                 Anstehende Lieder</div>
+                                            <ul class="list-unstyled">
+                                                <?php echo $listItems; ?>
+                                            </ul>
 
                                         </div>
 
@@ -102,13 +133,67 @@ include 'auth.php';
                                 <!-- Card Body -->
                                 <div class="card-body">
                                     <div class="chart-area">
+                                        <?php
+                                        include 'datenbank.php';
+
+                                        // SQL-Abfrage ausführen, um die Liederdaten zu erhalten
+                                        $sql = "SELECT name, autor, hinzugefuegt_am FROM lieder ORDER BY hinzugefuegt_am DESC";
+                                        $result = $conn->query($sql);
+
+                                        // Überprüfen, ob die Abfrage erfolgreich war
+                                        if ($result === false) {
+                                            die("Datenbankabfrage fehlgeschlagen: " . $conn->error);
+                                        }
+                                        ?>
+
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th>Lied</th>
+                                                    <th>Autor</th>
+                                                    <th>Hinzugefügt am</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php
+                                                if ($result->num_rows > 0) {
+                                                    while ($row = $result->fetch_assoc()) {
+                                                        // Benutzernamen manuell hinzufügen
+                                                        $benutzername = getBenutzername($row["autor"]);
+
+                                                        echo "<tr>
+                            <td>" . $row["name"] . "</td>
+                            <td>" . $benutzername . "</td>
+                            <td>" . $row["hinzugefuegt_am"] . "</td>
+                        </tr>";
+                                                    }
+                                                } else {
+                                                    echo "<tr>
+                        <td colspan='3'>Keine Daten vorhanden.</td>
+                    </tr>";
+                                                }
+                                                ?>
+                                            </tbody>
+                                        </table>
 
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-
+                        <?php
+                        // Funktion zum Abrufen des Benutzernamens basierend auf der Autor-ID
+                        function getBenutzername($autor)
+                        {
+                            // Hier kannst du den Code zum Abrufen des Benutzernamens implementieren
+                            // Basierend auf der übergebenen Autor-ID kannst du eine Datenbankabfrage ausführen
+                            // und den entsprechenden Benutzernamen zurückgeben
+                            // Beispiel:
+                            // $benutzername = ...
+                        
+                            return $autor; // Platzhalter, ersetze dies mit dem tatsächlichen Code
+                        }
+                        ?>
                     </div>
 
 
@@ -134,7 +219,23 @@ include 'auth.php';
         <i class="fas fa-angle-up"></i>
     </a>
 
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
 
+        table,
+        th,
+        td {
+            border: 1px solid black;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
 
     <script>
         <?php
