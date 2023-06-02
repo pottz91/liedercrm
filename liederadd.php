@@ -3,10 +3,6 @@ include 'header.php';
 include 'datenbank.php';
 include 'auth.php';
 
-
-
-
-
 // Überprüfen, ob das Formular zum Hinzufügen oder Bearbeiten abgeschickt wurde
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST["action"])) {
@@ -46,7 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
 
             // SQL-Statement zum Hinzufügen des Lieds in die Datenbank
-            $sql = "INSERT INTO lieder (name, autor, ton, pdf_attachment) VALUES ('$name', '$autor', '$ton', '$pdf_attachment')";
+            $sql = "INSERT INTO lieder (name, autor, ton, pdf_attachment, hinzugefuegt_am) VALUES ('$name', '$autor', '$ton', '$pdf_attachment', NOW())";
 
             if ($conn->query($sql) === TRUE) {
                 echo "<p>Lied wurde erfolgreich hinzugefügt.</p>";
@@ -109,21 +105,17 @@ include 'header.php';
     <?php
     include 'menu.php'; ?>
 
-
     <!-- Content Wrapper -->
     <div id="content-wrapper" class="d-flex flex-column">
         <?php
         include 'topbar.php'; ?>
         <!-- Main Content -->
         <div id="content">
-
             <!-- End of Topbar -->
-
             <!-- Begin Page Content -->
             <div class="container-fluid">
-
                 <div class="content">
-                    <h1>Lieder bearbeiten</h1>
+                    <h1>Lieder hinzufügen</h1>
                     <form method="post" action="" enctype="multipart/form-data">
                         <div class="mb-3">
                             <label for="name" class="form-label">Name:</label>
@@ -155,6 +147,7 @@ include 'header.php';
                                 <th>Tonart</th>
                                 <th>Datei</th>
                                 <th>Aktionen</th>
+                                <th>Datum</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -182,6 +175,7 @@ include 'header.php';
                                     <td>
                                         <button type='button' class='btn btn-warning' data-bs-toggle='modal' data-bs-target='#editModal' data-id='" . $row["id"] . "' data-name='" . $row["name"] . "' data-autor='" . $row["autor"] . "' data-ton='" . $row["ton"] . "' data-pdf='" . $row["pdf_attachment"] . "'>Bearbeiten</button>
                                     </td>
+                                    <td>" . $row["hinzugefuegt_am"] . "</td>
                                 </tr>";
                                 }
                             } else {
@@ -233,15 +227,10 @@ include 'header.php';
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
-
         </div>
-
     </div>
-
-
 
     <script>
         // Modal öffnen und Liedinformationen setzen

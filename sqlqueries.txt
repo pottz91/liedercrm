@@ -13,5 +13,10 @@ CREATE TABLE lieder (
     autor VARCHAR(255),
     ton VARCHAR(255),
     pdf_attachment BLOB,
+    hinzugefuegt_am DATETIME,
     PRIMARY KEY (id)
 );
+
+//. UPDATE 02.06 Liedertabelle erweitern mit Datum:
+ALTER TABLE lieder
+ADD hinzugefuegt_am DATETIME;

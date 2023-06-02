@@ -211,7 +211,7 @@ include 'auth.php';
         // ApexCharts initialisieren
         const options = {
             chart: {
-                type: 'bar'
+                type: 'line'
             },
             series: [{
                 name: 'Anzahl der Lieder',
@@ -219,7 +219,14 @@ include 'auth.php';
             }],
             xaxis: {
                 categories: ['Gesamt']
-            }
+            },
+            stroke: {
+                curve: 'smooth',
+                colors: ['#576bcc'] // Hier wird die Farbe der Linie auf Blau gesetzt
+            },
+            fill: {
+                colors: ['#576bcc'] // Hier wird die Farbe des Bereichs unter der Linie auf Blau gesetzt
+            },
         };
 
         const chart = new ApexCharts(document.querySelector('#chart'), options);
