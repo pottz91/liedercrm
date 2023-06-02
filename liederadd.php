@@ -152,8 +152,8 @@ include 'header.php';
                         </thead>
                         <tbody>
                             <?php
-                            // SQL-Statement zum Abrufen der Lieder aus der Datenbank
-                            $sql = "SELECT * FROM lieder";
+                            // SQL-Statement zum Abrufen der Lieder aus der Datenbank mit deutschem Datums- und Uhrzeitformat
+                            $sql = "SELECT id, name, autor, ton, pdf_attachment, DATE_FORMAT(STR_TO_DATE(hinzugefuegt_am, '%Y-%m-%d %H:%i:%s'), '%d.%m.%Y %H:%i') AS hinzugefuegt_am_deutsch FROM lieder";
                             $result = $conn->query($sql);
 
                             // Überprüfen, ob Zeilen in der Abfrageergebnismenge vorhanden sind
@@ -168,20 +168,21 @@ include 'header.php';
                                     }
 
                                     echo "<tr>
-                                    <td>" . $row["name"] . "</td>
-                                    <td>" . $row["autor"] . "</td>
-                                    <td>" . $row["ton"] . "</td>
-                                    <td>$pdfButton</td>
-                                    <td>
-                                        <button type='button' class='btn btn-warning' data-bs-toggle='modal' data-bs-target='#editModal' data-id='" . $row["id"] . "' data-name='" . $row["name"] . "' data-autor='" . $row["autor"] . "' data-ton='" . $row["ton"] . "' data-pdf='" . $row["pdf_attachment"] . "'>Bearbeiten</button>
-                                    </td>
-                                    <td>" . $row["hinzugefuegt_am"] . "</td>
-                                </tr>";
+        <td>" . $row["name"] . "</td>
+        <td>" . $row["autor"] . "</td>
+        <td>" . $row["ton"] . "</td>
+        <td>$pdfButton</td>
+        <td>
+            <button type='button' class='btn btn-warning' data-bs-toggle='modal' data-bs-target='#editModal' data-id='" . $row["id"] . "' data-name='" . $row["name"] . "' data-autor='" . $row["autor"] . "' data-ton='" . $row["ton"] . "' data-pdf='" . $row["pdf_attachment"] . "'>Bearbeiten</button>
+        </td>
+        <td>" . $row["hinzugefuegt_am_deutsch"] . "</td>
+    </tr>";
                                 }
                             } else {
                                 echo "<tr><td colspan='5'>Keine Lieder gefunden.</td></tr>";
                             }
                             ?>
+
                         </tbody>
                     </table>
 
