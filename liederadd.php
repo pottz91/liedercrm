@@ -115,7 +115,7 @@ include 'header.php';
             <!-- Begin Page Content -->
             <div class="container-fluid">
                 <div class="content">
-                    <h1>Lieder hinzufügen</h1>
+                    <h1 class="h2 mb-0 text-gray-800">Lieder hinzufügen</h1>
                     <form method="post" action="" enctype="multipart/form-data">
                         <div class="mb-3">
                             <label for="name" class="form-label">Name:</label>
