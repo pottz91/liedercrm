@@ -1,6 +1,9 @@
 <?php
 session_start();
 
+// Die Datenbankverbindung einbinden
+include 'datenbank.php';
+
 // Überprüfen, ob der Benutzer angemeldet ist
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     // Benutzer ist nicht angemeldet, leite zur Login-Seite weiter
