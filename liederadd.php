@@ -56,6 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $name = $_POST["editName"];
             $autor = $_POST["editAutor"];
             $ton = $_POST["editTon"];
+            $datum = $_POST["editHinzugefuegt_am"];
 
             // Überprüfen, ob ein PDF-Anhang hochgeladen wurde
             if (isset($_FILES['editPdfAttachment']) && $_FILES['editPdfAttachment']['error'] === UPLOAD_ERR_OK) {
@@ -88,7 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
 
             // SQL-Statement zum Aktualisieren des Lieds in der Datenbank
-            $sql = "UPDATE lieder SET name='$name', autor='$autor', ton='$ton', pdf_attachment='$pdf_attachment' WHERE id=$id";
+            $sql = "UPDATE lieder SET name='$name', autor='$autor', ton='$ton', pdf_attachment='$pdf_attachment', hinzugefuegt_am='$datum' WHERE id=$id";
 
             if ($conn->query($sql) === TRUE) {
                 echo "<p>Lied wurde erfolgreich aktualisiert.</p>";
@@ -153,7 +154,7 @@ include 'header.php';
                         <tbody>
                             <?php
                             // SQL-Statement zum Abrufen der Lieder aus der Datenbank mit deutschem Datums- und Uhrzeitformat
-                            $sql = "SELECT id, name, autor, ton, pdf_attachment, DATE_FORMAT(STR_TO_DATE(hinzugefuegt_am, '%Y-%m-%d %H:%i:%s'), '%d.%m.%Y %H:%i') AS hinzugefuegt_am_deutsch FROM lieder";
+                            $sql = "SELECT id, name, autor, ton, pdf_attachment, DATE_FORMAT(STR_TO_DATE(hinzugefuegt_am, '%Y-%m-%d'), '%d.%m.%Y') AS hinzugefuegt_am_deutsch FROM lieder";
                             $result = $conn->query($sql);
 
                             // Überprüfen, ob Zeilen in der Abfrageergebnismenge vorhanden sind
@@ -220,6 +221,11 @@ include 'header.php';
                                             <input type="hidden" id="editPdfAttachmentExisting"
                                                 name="editPdfAttachmentExisting">
                                         </div>
+                                        <div class="mb-3">
+                                            <label for="editDatum" class="form-label">Datum:</label>
+                                            <input type="date" class="form-control" id="editHinzugefuegt_am" name="editHinzugefuegt_am"
+                                                required>
+                                        </div>                                        
                                         <input type="hidden" id="editId" name="editId">
                                         <input type="hidden" name="action" value="edit">
                                         <button type="submit" class="btn btn-primary">Lied aktualisieren</button>
@@ -246,6 +252,7 @@ include 'header.php';
             var autor = button.getAttribute('data-autor');
             var ton = button.getAttribute('data-ton');
             var pdf = button.getAttribute('data-pdf');
+            var datum = button.getAttribute('data-datum')
 
             // Liedinformationen im Modal setzen
             var editForm = document.getElementById('editForm');
@@ -255,6 +262,7 @@ include 'header.php';
             document.getElementById('editAutor').value = autor;
             document.getElementById('editTon').value = ton;
             document.getElementById('editPdfAttachmentExisting').value = pdf;
+            document.getElementById('editEingefuegt_am').value = datum;
         });
     </script>
     </body>
