@@ -85,12 +85,12 @@ $conn->close();
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                                 Anstehende Lieder</div>
-                                            <ul class="list-unstyled">
-                                                <?php echo $listItems; ?>
-                                            </ul>
-
+                                            <div class="scrollable-list">
+                                                <ul class="list-unstyled">
+                                                    <?php echo $listItems; ?>
+                                                </ul>
+                                            </div>
                                         </div>
-
                                     </div>
                                 </div>
                             </div>
@@ -106,7 +106,7 @@ $conn->close();
                     <div class="row">
 
                         <!-- Area Chart -->
-                        <div class="col-xl-12 col-lg-12">
+                        <div class="col-xl-6 col-lg-6">
                             <div class="card shadow mb-4">
                                 <!-- Card Header - Dropdown -->
                                 <div
@@ -129,7 +129,13 @@ $conn->close();
                                     </div>
 
                                 </div>
-
+                                <div class="scrollable-list">
+                                <style>
+                                    .scrollable-list {
+                                    max-height: 400px;
+                                    overflow-y: auto;
+                                    }
+                                </style>
                                 <!-- Card Body -->
                                 <div class="card-body">
                                     <div class="chart-area">
