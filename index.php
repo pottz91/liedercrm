@@ -7,7 +7,6 @@ session_start();
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST['user'];
     $password = $_POST['passwort'];
-
     // SQL-Statement zum Abrufen des Benutzers aus der Datenbank
     $sql = "SELECT passwort FROM benutzer WHERE benutzername = '$username'";
     $result = $conn->query($sql);
@@ -20,6 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (password_verify($password, $hashedPassword)) {
             // Anmeldeinformationen sind korrekt, Sitzung erstellen
             $_SESSION['loggedin'] = true;
+            $_SESSION['benutzername'] = $username;
             // Leite zur Startseite weiter
             header('Location: seite2.php');
             exit;

@@ -62,21 +62,89 @@ $conn->close();
 
                     <!-- Content Row -->
                     <div class="row">
+                        <!-- Area Chart -->
+                        <div class="col-xl-6 col-lg-6">
+                            <div class="card shadow mb-4">
+                                <!-- Card Header - Dropdown -->
+                                <div
+                                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-primary">Letzte angelegte Lieder</h6>
+                                    <div class="dropdown no-arrow">
+                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                                        </a>
 
-                        <div class="col-xl-6 col-md-6 mb-4">
-                            <div class="card border-left-primary shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                Lieder (Gesamt)</div>
-                                            <div id="chart"></div>
+
+                                    </div>
+
+                                </div>
+                                <div class="scrollable-list">
+                                    <style>
+                                        .scrollable-list {
+                                            max-height: 400px;
+                                            overflow-y: auto;
+                                        }
+                                    </style>
+                                    <!-- Card Body -->
+                                    <div class="card-body">
+                                        <div class="chart-area">
+                                            <?php
+                                            include 'datenbank.php';
+
+                                            // SQL-Abfrage ausführen, um die Liederdaten zu erhalten
+                                            $sql = "SELECT name, autor, hinzugefuegt_am FROM lieder ORDER BY hinzugefuegt_am DESC";
+                                            $result = $conn->query($sql);
+
+                                            // Überprüfen, ob die Abfrage erfolgreich war
+                                            if ($result === false) {
+                                                die("Datenbankabfrage fehlgeschlagen: " . $conn->error);
+                                            }
+                                            ?>
+
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered" id="dataTable" width="100%"
+                                                    cellspacing="0">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Name</th>
+                                                            <th>Benutzername</th>
+                                                            <th>Autor</th>
+                                                            <th>Hinzugefügt am</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <?php
+                                                        if ($result->num_rows > 0) {
+                                                            while ($row = $result->fetch_assoc()) {
+                                                                // Benutzername anhand der Benutzer-ID abrufen
+                                                                $benutzer_id = getBenutzerId($row["autor"]);
+                                                                $benutzername = getBenutzername($benutzer_id);
+
+                                                                echo "<tr>
+                        <td>" . $row["name"] . "</td>
+                        <td>" . $benutzername . "</td>
+                        <td>" . $row["autor"] . "</td>
+                        <td>" . $row["hinzugefuegt_am"] . "</td>
+                    </tr>";
+                                                            }
+                                                        } else {
+                                                            echo "<tr>
+                    <td colspan='4'>Keine Daten vorhanden.</td>
+                </tr>";
+                                                        }
+                                                        ?>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
                                         </div>
-
                                     </div>
                                 </div>
                             </div>
                         </div>
+
+
 
                         <div class="col-xl-6 col-md-6 mb-4">
                             <div class="card border-left-success shadow h-100 py-2">
@@ -104,102 +172,89 @@ $conn->close();
                     <!-- Content Row -->
 
                     <div class="row">
-
-                        <!-- Area Chart -->
-                        <div class="col-xl-6 col-lg-6">
-                            <div class="card shadow mb-4">
-                                <!-- Card Header - Dropdown -->
-                                <div
-                                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Letzte angelegte Lieder</h6>
-                                    <div class="dropdown no-arrow">
-                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                                            aria-labelledby="dropdownMenuLink">
-                                            <div class="dropdown-header">Dropdown Header:</div>
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Something else here</a>
+                        <div class="col-xl-6 col-md-6 mb-4">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                Lieder (Gesamt)</div>
+                                            <div id="chart"></div>
                                         </div>
 
                                     </div>
-
                                 </div>
-                                <div class="scrollable-list">
-                                <style>
-                                    .scrollable-list {
-                                    max-height: 400px;
-                                    overflow-y: auto;
-                                    }
-                                </style>
-                                <!-- Card Body -->
+
+                            </div>
+
+                        </div>
+
+                        <?php
+                        // Funktion zum Abrufen des Benutzernamens basierend auf der Autor-ID
+                        function getBenutzerId($autor)
+                        {
+                            global $conn;
+
+                            $sql = "SELECT benutzer_id FROM lieder WHERE autor = '$autor'";
+                            $result = $conn->query($sql);
+
+                            if ($result->num_rows > 0) {
+                                $row = $result->fetch_assoc();
+                                return $row["benutzer_id"];
+                            } else {
+                                return "";
+                            }
+                        }
+
+                        function getBenutzername($benutzer_id)
+                        {
+                            global $conn;
+
+                            $sql = "SELECT benutzername FROM benutzer WHERE id = '$benutzer_id'";
+                            $result = $conn->query($sql);
+
+                            if ($result->num_rows > 0) {
+                                $row = $result->fetch_assoc();
+                                return $row["benutzername"];
+                            } else {
+                                return "";
+                            }
+                        }
+
+                        ?>
+                        <div class="col-xl-6 col-md-6 mb-4">
+                            <div class="card border-left-success shadow h-100 py-2">
                                 <div class="card-body">
-                                    <div class="chart-area">
-                                        <?php
-                                        include 'datenbank.php';
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                                Gesamtzahl der Abspielungen</div>
+                                            <div class="scrollable-list">
+                                                <ul class="list-unstyled">
+                                                    <?php
+                                                    // SQL-Abfrage ausführen, um die Gesamtzahl der Abspielungen der Lieder zu erhalten
+                                                    $sql = "SELECT lieder.name, COALESCE(abspielungen.gesamt_abspielungen, 0) AS gesamt_abspielungen
+                                    FROM lieder
+                                    LEFT JOIN abspielungen ON lieder.id = abspielungen.lieder_id";
+                                                    $result = $conn->query($sql);
 
-                                        // SQL-Abfrage ausführen, um die Liederdaten zu erhalten
-                                        $sql = "SELECT name, autor, hinzugefuegt_am FROM lieder ORDER BY hinzugefuegt_am DESC";
-                                        $result = $conn->query($sql);
-
-                                        // Überprüfen, ob die Abfrage erfolgreich war
-                                        if ($result === false) {
-                                            die("Datenbankabfrage fehlgeschlagen: " . $conn->error);
-                                        }
-                                        ?>
-
-                                        <table>
-                                            <thead>
-                                                <tr>
-                                                    <th>Lied</th>
-                                                    <th>Autor</th>
-                                                    <th>Hinzugefügt am</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <?php
-                                                if ($result->num_rows > 0) {
-                                                    while ($row = $result->fetch_assoc()) {
-                                                        // Benutzernamen manuell hinzufügen
-                                                        $benutzername = getBenutzername($row["autor"]);
-
-                                                        echo "<tr>
-                            <td>" . $row["name"] . "</td>
-                            <td>" . $benutzername . "</td>
-                            <td>" . $row["hinzugefuegt_am"] . "</td>
-                        </tr>";
+                                                    if ($result === false) {
+                                                        die("Datenbankabfrage fehlgeschlagen: " . $conn->error);
                                                     }
-                                                } else {
-                                                    echo "<tr>
-                        <td colspan='3'>Keine Daten vorhanden.</td>
-                    </tr>";
-                                                }
-                                                ?>
-                                            </tbody>
-                                        </table>
 
+                                                    while ($row = $result->fetch_assoc()) {
+                                                        echo "<li class='py-2'>" . $row["name"] . " - Gesamtzahl der Abspielungen: " . $row["gesamt_abspielungen"] . "</li>";
+                                                    }
+                                                    ?>
+                                                </ul>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <?php
-                        // Funktion zum Abrufen des Benutzernamens basierend auf der Autor-ID
-                        function getBenutzername($autor)
-                        {
-                            // Hier kannst du den Code zum Abrufen des Benutzernamens implementieren
-                            // Basierend auf der übergebenen Autor-ID kannst du eine Datenbankabfrage ausführen
-                            // und den entsprechenden Benutzernamen zurückgeben
-                            // Beispiel:
-                            // $benutzername = ...
-                        
-                            return $autor; // Platzhalter, ersetze dies mit dem tatsächlichen Code
-                        }
-                        ?>
+
                     </div>
 
 

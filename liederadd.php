@@ -1,7 +1,7 @@
 <?php
+include 'auth.php';
 include 'header.php';
 include 'datenbank.php';
-include 'auth.php';
 
 // Überprüfen, ob das Formular zum Hinzufügen oder Bearbeiten abgeschickt wurde
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -33,7 +33,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 // Das erfasste Datum in das richtige Format konvertieren (von d.m.Y zu Y-m-d)
                 $hinzugefuegt_am = date("Y-m-d", strtotime($datum));
 
-
                 // Überprüfen, ob $uploadOk aufgrund eines Fehlers auf 0 gesetzt ist
                 if ($uploadOk == 0) {
                     echo "Die Datei wurde nicht hochgeladen.";
@@ -47,14 +46,58 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
             }
 
-            // SQL-Statement zum Hinzufügen des Lieds in die Datenbank
-            $sql = "INSERT INTO lieder (name, autor, ton, pdf_attachment, hinzugefuegt_am) VALUES ('$name', '$autor', '$ton', '$pdf_attachment', '$hinzugefuegt_am')";
+            if (isset($_SESSION['benutzername'])) {
+                $benutzername = $_SESSION['benutzername'];
+
+                // Überprüfen, ob der Benutzer in der Datenbank vorhanden ist und die entsprechende benutzer_id abrufen
+                $benutzerQuery = "SELECT id FROM benutzer WHERE benutzername = '$benutzername'";
+                $benutzerResult = $conn->query($benutzerQuery);
+
+                if ($benutzerResult->num_rows > 0) {
+                    $benutzerRow = $benutzerResult->fetch_assoc();
+                    $benutzer_id = $benutzerRow['id'];
+                } else {
+                    // handle the case when the user does not exist in the database
+                    echo "Benutzer existiert nicht.";
+                    exit();
+                }
+            } else {
+                // handle the case when 'benutzername' does not exist in the session
+                echo "Benutzer ist nicht angemeldet.";
+                exit();
+            }
+
+            // Abspielung des Liedes zählen und in die Tabelle "abspielungen" einfügen
+            $abspielungenQuery = "INSERT INTO abspielungen (lieder_id, gesamt_abspielungen)
+VALUES ('$id', 1)
+ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
+
+            $conn->query($abspielungenQuery);
+
+            $sql = "INSERT INTO lieder (name, autor, ton, pdf_attachment, hinzugefuegt_am, benutzer_id) VALUES ('$name', '$autor', '$ton', '$pdf_attachment', '$hinzugefuegt_am', '$benutzer_id')";
+
 
             if ($conn->query($sql) === TRUE) {
-                echo "<p>Lied wurde erfolgreich hinzugefügt.</p>";
+                $id = $conn->insert_id; // Abrufen der ID des gerade hinzugefügten Liedes
+
+                // Überprüfen, ob die ID erfolgreich abgerufen wurde
+                if ($id) {
+                    echo "<p>Lied wurde erfolgreich hinzugefügt.</p>";
+
+                    // Abspielung des Liedes zählen und in die Tabelle "abspielungen" einfügen
+                    $abspielungenQuery = "INSERT INTO abspielungen (lieder_id, gesamt_abspielungen)
+                                          VALUES ('$id', 1)
+                                          ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
+
+                    $conn->query($abspielungenQuery);
+                    ;
+                } else {
+                    echo "Fehler beim Abrufen der ID des hinzugefügten Liedes.";
+                }
             } else {
                 echo "Fehler: " . $sql . "<br>" . $conn->error;
             }
+
         }
         // Bearbeiten eines vorhandenen Lieds
         elseif ($_POST["action"] == "edit") {
@@ -105,20 +148,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 }
-
-include 'header.php';
 ?>
+
 <div id="wrapper">
-    <?php
-    include 'menu.php'; ?>
+    <?php include 'menu.php'; ?>
 
     <!-- Content Wrapper -->
     <div id="content-wrapper" class="d-flex flex-column">
-        <?php
-        include 'topbar.php'; ?>
+        <?php include 'topbar.php'; ?>
         <!-- Main Content -->
         <div id="content">
-            <!-- End of Topbar -->
             <!-- Begin Page Content -->
             <div class="container-fluid">
                 <div class="content">
@@ -158,14 +197,19 @@ include 'header.php';
                                 <th>Autor</th>
                                 <th>Tonart</th>
                                 <th>Datei</th>
+                                <th>Benutzername</th>
                                 <th>Aktionen</th>
                                 <th>Datum</th>
+                                <th>Gesamt Abspielungen</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php
                             // SQL-Statement zum Abrufen der Lieder aus der Datenbank mit deutschem Datums- und Uhrzeitformat
-                            $sql = "SELECT id, name, autor, ton, pdf_attachment, DATE_FORMAT(STR_TO_DATE(hinzugefuegt_am, '%Y-%m-%d'), '%d.%m.%Y') AS hinzugefuegt_am_deutsch FROM lieder";
+                            $sql = "SELECT lieder.id, lieder.name, lieder.autor, lieder.ton, lieder.pdf_attachment, benutzer.benutzername, DATE_FORMAT(STR_TO_DATE(lieder.hinzugefuegt_am, '%Y-%m-%d'), '%d.%m.%Y') AS hinzugefuegt_am_deutsch, COALESCE(abspielungen.gesamt_abspielungen, 0) AS gesamt_abspielungen
+                                    FROM lieder
+                                    LEFT JOIN benutzer ON lieder.benutzer_id = benutzer.id
+                                    LEFT JOIN (SELECT lieder_id, COUNT(*) AS gesamt_abspielungen FROM abspielungen GROUP BY lieder_id) AS abspielungen ON lieder.id = abspielungen.lieder_id";
                             $result = $conn->query($sql);
 
                             // Überprüfen, ob Zeilen in der Abfrageergebnismenge vorhanden sind
@@ -180,21 +224,22 @@ include 'header.php';
                                     }
 
                                     echo "<tr>
-        <td>" . $row["name"] . "</td>
-        <td>" . $row["autor"] . "</td>
-        <td>" . $row["ton"] . "</td>
-        <td>$pdfButton</td>
-        <td>
-            <button type='button' class='btn btn-warning' data-bs-toggle='modal' data-bs-target='#editModal' data-id='" . $row["id"] . "' data-name='" . $row["name"] . "' data-autor='" . $row["autor"] . "' data-ton='" . $row["ton"] . "' data-pdf='" . $row["pdf_attachment"] . "'>Bearbeiten</button>
-        </td>
-        <td>" . $row["hinzugefuegt_am_deutsch"] . "</td>
-    </tr>";
+                                            <td>" . $row["name"] . "</td>
+                                            <td>" . $row["autor"] . "</td>
+                                            <td>" . $row["ton"] . "</td>
+                                            <td>$pdfButton</td>
+                                            <td>" . $row["benutzername"] . "</td>
+                                            <td>
+                                                <button type='button' class='btn btn-warning' data-bs-toggle='modal' data-bs-target='#editModal' data-id='" . $row["id"] . "' data-name='" . $row["name"] . "' data-autor='" . $row["autor"] . "' data-ton='" . $row["ton"] . "' data-pdf='" . $row["pdf_attachment"] . "'>Bearbeiten</button>
+                                            </td>
+                                            <td>" . $row["hinzugefuegt_am_deutsch"] . "</td>
+                                            <td>" . $row["gesamt_abspielungen"] . "</td>
+                                          </tr>";
                                 }
                             } else {
-                                echo "<tr><td colspan='5'>Keine Lieder gefunden.</td></tr>";
+                                echo "<tr><td colspan='8'>Keine Lieder gefunden.</td></tr>";
                             }
                             ?>
-
                         </tbody>
                     </table>
 
@@ -233,7 +278,7 @@ include 'header.php';
                                                 name="editPdfAttachmentExisting">
                                         </div>
                                         <div class="mb-3">
-                                            <label for="editDatum" class="form-label">Datum:</label>
+                                            <label for="editHinzugefuegt_am" class="form-label">Datum:</label>
                                             <input type="date" class="form-control" id="editHinzugefuegt_am"
                                                 name="editHinzugefuegt_am" required>
                                         </div>
@@ -273,7 +318,12 @@ include 'header.php';
             document.getElementById('editAutor').value = autor;
             document.getElementById('editTon').value = ton;
             document.getElementById('editPdfAttachmentExisting').value = pdf;
-            document.getElementById('editEingefuegt_am').value = datum;
+            document.getElementById('editHinzugefuegt_am').value = datum;
+
         });
     </script>
-    </body>
+</div>
+</div>
+</body>
+
+</html>

@@ -20,3 +20,23 @@ CREATE TABLE lieder (
 //. UPDATE 02.06 Liedertabelle erweitern mit Datum:
 ALTER TABLE lieder
 ADD hinzugefuegt_am DATETIME;
+
+
+// Update 08.06 Neue Reihe
+ALTER TABLE lieder
+ADD COLUMN benutzer_id INT(6) UNSIGNED;
+
+// Table Join / Verbindung herstellen Benutzer->Lieder
+ALTER TABLE lieder
+ADD CONSTRAINT fk_benutzer
+FOREIGN KEY (benutzer_id) REFERENCES benutzer(id);
+
+ALTER TABLE lieder
+ADD INDEX idx_lieder_id (id);
+
+CREATE TABLE abspielungen (
+  id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  lieder_id INT(11),
+  gesamt_abspielungen INT(6),
+  FOREIGN KEY (lieder_id) REFERENCES lieder(id)
+);
