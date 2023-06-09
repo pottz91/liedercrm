@@ -28,6 +28,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $uploadOk = 0;
                 }
 
+                // Datum aus dem Formular erfassen
+                $datum = $_POST["hinzugefuegt_am"];
+                // Das erfasste Datum in das richtige Format konvertieren (von d.m.Y zu Y-m-d)
+                $hinzugefuegt_am = date("Y-m-d", strtotime($datum));
+
+
                 // Überprüfen, ob $uploadOk aufgrund eines Fehlers auf 0 gesetzt ist
                 if ($uploadOk == 0) {
                     echo "Die Datei wurde nicht hochgeladen.";
@@ -42,7 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
 
             // SQL-Statement zum Hinzufügen des Lieds in die Datenbank
-            $sql = "INSERT INTO lieder (name, autor, ton, pdf_attachment, hinzugefuegt_am) VALUES ('$name', '$autor', '$ton', '$pdf_attachment', NOW())";
+            $sql = "INSERT INTO lieder (name, autor, ton, pdf_attachment, hinzugefuegt_am) VALUES ('$name', '$autor', '$ton', '$pdf_attachment', '$hinzugefuegt_am')";
 
             if ($conn->query($sql) === TRUE) {
                 echo "<p>Lied wurde erfolgreich hinzugefügt.</p>";
@@ -135,6 +141,11 @@ include 'header.php';
                             <input type="file" class="form-control" id="pdf_attachment" name="pdf_attachment"
                                 accept="application/pdf" required>
                         </div>
+                        <div class="mb-3">
+                            <label for="hinzugefuegt_am" class="form-label">Hinzugefügt am:</label>
+                            <input type="date" class="form-control" id="hinzugefuegt_am" name="hinzugefuegt_am"
+                                required>
+                        </div>
                         <input type="hidden" name="action" value="add">
                         <button type="submit" class="btn btn-primary">Lied hinzufügen</button>
                     </form>
@@ -223,9 +234,9 @@ include 'header.php';
                                         </div>
                                         <div class="mb-3">
                                             <label for="editDatum" class="form-label">Datum:</label>
-                                            <input type="date" class="form-control" id="editHinzugefuegt_am" name="editHinzugefuegt_am"
-                                                required>
-                                        </div>                                        
+                                            <input type="date" class="form-control" id="editHinzugefuegt_am"
+                                                name="editHinzugefuegt_am" required>
+                                        </div>
                                         <input type="hidden" id="editId" name="editId">
                                         <input type="hidden" name="action" value="edit">
                                         <button type="submit" class="btn btn-primary">Lied aktualisieren</button>
