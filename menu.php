@@ -54,44 +54,34 @@
     <a class="navbar-brand ml-auto order-2" href="#" onclick="toggleMobileMenu()">
         <i class="fas fa-bars" style="display: inline-block;"></i>
     </a>
-    <ul id="mobileMenuList" class="list-unstyled" style="display: none;">
-    
-    <li class="nav-item active">
-        <a class="nav-link" href="seite2.php">
-            <i class="fas fa-fw fa-tachometer-alt"></i>
-            <span class="menu-font">Dashboard</span></a>
-    </li>
-
-    <!-- Divider -->
-    <hr class="sidebar-divider">
-
-    <!-- Heading -->
-    <div class="sidebar-heading">
-        Interface
+    <div id="mobileMenuList">
+        <div class="row">
+            <div class="col">
+                <a class="nav-link" href="seite2.php">
+                    <i class="fas fa-fw fa-tachometer-alt"></i>
+                    <span class="menu-font">Dashboard</span>
+                </a>
+            </div>
+            <div class="col">
+                <a class="nav-link" href="lieder.php">
+                    <i class="fas fa-fw fa-music"></i>
+                    <span class="menu-font">Lieder</span>
+                </a>
+            </div>
+            <div class="col">
+                <a class="nav-link" href="liederadd.php">
+                    <i class="fas fa-fw fa-music"></i>
+                    <span class="menu-font">Lieder hinzufügen</span>
+                </a>
+            </div>
+            <div class="col">
+                <a class="nav-link" href="logout.php">
+                    <i class="fas fa-fw fa-sign-out"></i>
+                    <span class="menu-font">Logout</span>
+                </a>
+            </div>
+        </div>
     </div>
-
-
-        <li class="nav-item">
-        <a class="nav-link " href="lieder.php" aria-expanded="true">
-            <i class="fas fa-fw fa-music"></i>
-            <span class="menu-font">Lieder</span>
-        </a>
-    </li>
-
-        <li class="nav-item">
-        <a class="nav-link " href="liederadd.php" aria-expanded="true">
-            <i class="fas fa-fw fa-music"></i>
-            <span class="menu-font">Lieder hinzufügen</span>
-        </a>
-    </li>
-
-        <li class="nav-item">
-        <a class="nav-link " href="logout.php" aria-expanded="true">
-            <i class="fas fa-fw fa-sign-out"></i>
-            <span class="menu-font">Logout</span>
-        </a>
-    </li>
-    </ul>
 </footer>
 
 </ul>
