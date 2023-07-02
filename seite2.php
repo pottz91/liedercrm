@@ -56,29 +56,34 @@ $conn->close();
 
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Herzlich Willkommen</h1>
+                        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
 
                     </div>
 
                     <!-- Content Row -->
                     <div class="row">
                         <!-- Area Chart -->
-                        <div class="col-xl-6 col-lg-6">
-                            <div class="card shadow mb-4">
+                        <div class="col-xl-6 col-md-6 mb-4">
+                            <!--<div class="card shadow mb-4">-->
+                            <div class="card border-left-success shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                                Letzte angelegte Lieder</div>
                                 <!-- Card Header - Dropdown -->
-                                <div
-                                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Letzte angelegte Lieder</h6>
-                                    <div class="dropdown no-arrow">
-                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                        </a>
-
-
+                                    <!--<div
+                                        class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                        <h6 class="m-0 font-weight-bold text-primary">Letzte angelegte Lieder</h6>
+                                        <div class="dropdown no-arrow">
+                                            <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                                            </a>-->
+                                        </div>
                                     </div>
-
                                 </div>
+
                                 <div class="scrollable-list">
                                     <style>
                                         .scrollable-list {
@@ -87,8 +92,7 @@ $conn->close();
                                         }
                                     </style>
                                     <!-- Card Body -->
-                                    <div class="card-body">
-                                        <div class="chart-area">
+
                                             <?php
                                             include 'datenbank.php';
 
@@ -102,15 +106,14 @@ $conn->close();
                                             }
                                             ?>
 
-                                            <div class="table-responsive">
-                                                <table class="table table-bordered" id="dataTable" width="100%"
-                                                    cellspacing="0">
+                                            <div class="table table-borderless">
+                                                <table class="table">
                                                     <thead>
                                                         <tr>
                                                             <th>Name</th>
-                                                            <th>Benutzername</th>
                                                             <th>Autor</th>
-                                                            <th>Hinzugefügt am</th>
+                                                            <th>Hinzugefügt</th>
+                                                            <th>Benutzer</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -122,27 +125,25 @@ $conn->close();
                                                                 $benutzername = getBenutzername($benutzer_id);
 
                                                                 echo "<tr>
-                        <td>" . $row["name"] . "</td>
-                        <td>" . $benutzername . "</td>
-                        <td>" . $row["autor"] . "</td>
-                        <td>" . $row["hinzugefuegt_am"] . "</td>
-                    </tr>";
+                                                                <td>" . $row["name"] . "</td>
+                                                                <td>" . $row["autor"] . "</td>
+                                                                <td>" . $row["hinzugefuegt_am"] . "</td>
+                                                                <td>" . $benutzername . "</td>
+                                                            </tr>";
+                                                                }
+                                                            } else {
+                                                        echo 
+                                                            "<tr>
+                                                                <td colspan='4'>Keine Daten vorhanden.</td>
+                                                            </tr>";
                                                             }
-                                                        } else {
-                                                            echo "<tr>
-                    <td colspan='4'>Keine Daten vorhanden.</td>
-                </tr>";
-                                                        }
                                                         ?>
                                                     </tbody>
                                                 </table>
                                             </div>
-
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
 
 
 
