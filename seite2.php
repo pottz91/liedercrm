@@ -62,6 +62,24 @@ $conn->close();
 
                     <!-- Content Row -->
                     <div class="row">
+                        <div class="col-xl-6 col-md-6 mb-4">
+                            <div class="card border-left-success shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                                Anstehende Lieder</div>
+                                            <div class="scrollable-list">
+                                                <ul class="list-unstyled">
+                                                    <?php echo $listItems; ?>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Area Chart -->
                         <div class="col-xl-6 col-md-6 mb-4">
                             <!--<div class="card shadow mb-4">-->
@@ -71,8 +89,8 @@ $conn->close();
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                                 Letzte angelegte Lieder</div>
-                                <!-- Card Header - Dropdown -->
-                                    <!--<div
+                                            <!-- Card Header - Dropdown -->
+                                            <!--<div
                                         class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                                         <h6 class="m-0 font-weight-bold text-primary">Letzte angelegte Lieder</h6>
                                         <div class="dropdown no-arrow">
@@ -93,77 +111,60 @@ $conn->close();
                                     </style>
                                     <!-- Card Body -->
 
-                                            <?php
-                                            include 'datenbank.php';
+                                    <?php
+                                    include 'datenbank.php';
 
-                                            // SQL-Abfrage ausführen, um die Liederdaten zu erhalten
-                                            $sql = "SELECT name, autor, hinzugefuegt_am FROM lieder ORDER BY hinzugefuegt_am DESC";
-                                            $result = $conn->query($sql);
+                                    // SQL-Abfrage ausführen, um die Liederdaten zu erhalten
+                                    $sql = "SELECT name, autor, hinzugefuegt_am FROM lieder ORDER BY hinzugefuegt_am DESC";
+                                    $result = $conn->query($sql);
 
-                                            // Überprüfen, ob die Abfrage erfolgreich war
-                                            if ($result === false) {
-                                                die("Datenbankabfrage fehlgeschlagen: " . $conn->error);
-                                            }
-                                            ?>
+                                    // Überprüfen, ob die Abfrage erfolgreich war
+                                    if ($result === false) {
+                                        die("Datenbankabfrage fehlgeschlagen: " . $conn->error);
+                                    }
+                                    ?>
 
-                                            <div class="table table-borderless">
-                                                <table class="table">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Name</th>
-                                                            <th>Autor</th>
-                                                            <th>Hinzugefügt</th>
-                                                            <th>Benutzer</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <?php
-                                                        if ($result->num_rows > 0) {
-                                                            while ($row = $result->fetch_assoc()) {
-                                                                // Benutzername anhand der Benutzer-ID abrufen
-                                                                $benutzer_id = getBenutzerId($row["autor"]);
-                                                                $benutzername = getBenutzername($benutzer_id);
+                                    <div class="table table-borderless">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>Autor</th>
+                                                    <th>Hinzugefügt</th>
+                                                    <th>Benutzer</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php
+                                                if ($result->num_rows > 0) {
+                                                    while ($row = $result->fetch_assoc()) {
+                                                        // Benutzername anhand der Benutzer-ID abrufen
+                                                        $benutzer_id = getBenutzerId($row["autor"]);
+                                                        $benutzername = getBenutzername($benutzer_id);
 
-                                                                echo "<tr>
+                                                        echo "<tr>
                                                                 <td>" . $row["name"] . "</td>
                                                                 <td>" . $row["autor"] . "</td>
                                                                 <td>" . $row["hinzugefuegt_am"] . "</td>
                                                                 <td>" . $benutzername . "</td>
                                                             </tr>";
-                                                                }
-                                                            } else {
-                                                        echo 
-                                                            "<tr>
+                                                    }
+                                                } else {
+                                                    echo
+                                                        "<tr>
                                                                 <td colspan='4'>Keine Daten vorhanden.</td>
                                                             </tr>";
-                                                            }
-                                                        ?>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-
-
-                        <div class="col-xl-6 col-md-6 mb-4">
-                            <div class="card border-left-success shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                                Anstehende Lieder</div>
-                                            <div class="scrollable-list">
-                                                <ul class="list-unstyled">
-                                                    <?php echo $listItems; ?>
-                                                </ul>
-                                            </div>
-                                        </div>
+                                                }
+                                                ?>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
+
+
 
 
 
@@ -244,7 +245,7 @@ $conn->close();
                                                     }
 
                                                     while ($row = $result->fetch_assoc()) {
-                                                        echo "<li class='py-2'>" . $row["name"] . " - Gesamtzahl der Abspielungen: " . $row["gesamt_abspielungen"] . "</li>";
+                                                        echo "<li class='py-2'>" . $row["name"] . " - " . $row["gesamt_abspielungen"] . "</li>";
                                                     }
                                                     ?>
                                                 </ul>
