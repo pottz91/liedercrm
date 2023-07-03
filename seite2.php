@@ -24,7 +24,7 @@ if ($result->num_rows > 0) {
         $datum = date("d.m.Y", strtotime($row["hinzugefuegt_am"]));
         $class = ($datum == date("d.m.Y")) ? "text-success" : ""; // Hervorhebung für das aktuelle Datum
         $listItems .= "<li class='py-2 {$class}'>" . $row["name"] . " - " . $datum . "</li>";
-        $listItems .= "<hr class='my-2'>"; // Trennstrich
+        $listItems .= "<hr class='my-1'>"; // Trennstrich
     }
 } else {
     $listItems = "<li>Keine Daten vorhanden.</li>";
@@ -157,18 +157,22 @@ $conn->close();
                                                             $benutzername = getBenutzername($benutzer_id);
 
                                                             echo "<tr>
-                                <td>" . $row["name"] . "</td>
-                                <td class='optional-column autor-column'>" . $row["autor"] . "</td>
-                                <td>" . $row["hinzugefuegt_am"] . "</td>
-                                <td class='optional-column benutzer-column'>" . $benutzername . "</td>
-                            </tr>";
+                <td>" . $row["name"] . "</td>
+                <td class='optional-column autor-column'>" . $row["autor"] . "</td>
+                <td>" . $row["hinzugefuegt_am"] . "</td>
+                <td class='optional-column benutzer-column'>" . $benutzername . "</td>
+            </tr>
+            <tr>
+                <td colspan='4'><hr class='my-1'></td>
+            </tr>";
                                                         }
                                                     } else {
                                                         echo "<tr>
-                            <td colspan='4'>Keine Daten vorhanden.</td>
-                        </tr>";
+            <td colspan='4'>Keine Daten vorhanden.</td>
+        </tr>";
                                                     }
                                                     ?>
+
                                                 </tbody>
                                             </table>
                                         </div>
@@ -272,8 +276,8 @@ $conn->close();
                                                     <?php
                                                     // SQL-Abfrage ausführen, um die Gesamtzahl der Abspielungen der Lieder zu erhalten
                                                     $sql = "SELECT lieder.name, COALESCE(abspielungen.gesamt_abspielungen, 0) AS gesamt_abspielungen
-                                    FROM lieder
-                                    LEFT JOIN abspielungen ON lieder.id = abspielungen.lieder_id";
+            FROM lieder
+            LEFT JOIN abspielungen ON lieder.id = abspielungen.lieder_id";
                                                     $result = $conn->query($sql);
 
                                                     if ($result === false) {
@@ -282,8 +286,10 @@ $conn->close();
 
                                                     while ($row = $result->fetch_assoc()) {
                                                         echo "<li class='py-2'>" . $row["name"] . " - " . $row["gesamt_abspielungen"] . "</li>";
+                                                        echo "<hr class='my-1'>";
                                                     }
                                                     ?>
+
                                                 </ul>
                                             </div>
                                         </div>

@@ -10,6 +10,5 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] != 1) {
     header('Location: index.php');
     exit;
 }
-echo "<p>Angemeldet als: " . $_SESSION['benutzername'] . "</p>";
 
 ?>

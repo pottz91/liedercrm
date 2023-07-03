@@ -30,11 +30,6 @@ include 'auth.php';
                     <div class="content">
                         <!-- Page Heading -->
                         <p>Auf dieser Seite hast du einen Überblick über deine <b>Lieder</b></p>
-                        <form method="post" action="suche.php">
-                            <label for="search">Suche:</label>
-                            <input type="text" id="search" name="search">
-                            <button type="submit">Suchen</button>
-                        </form>
                         <?php
                         include 'datenbank.php';
 
@@ -55,7 +50,7 @@ include 'auth.php';
                         $result = $conn->query($sql);
 
                         if ($result->num_rows > 0) {
-                            echo "<table class='table'>";
+                            echo "<table id='lieder-table' class='table '>";
                             echo "<thead><tr><th>Name</th><th>Autor</th><th>Tonart</th><th>Datei</th><th>Aktionen</th><th>Datum</th></tr></thead>";
                             echo "<tbody>";
                             while ($row = $result->fetch_assoc()) {
@@ -66,17 +61,17 @@ include 'auth.php';
                                 echo "<td>";
                                 if (!empty($row["pdf_attachment"])) {
                                     $pdfPath = "pdf/" . $row["pdf_attachment"];
-                                    echo "<a href='$pdfPath' target='_blank' class='btn btn-primary'>PDF öffnen</a>";
+                                    echo "<a style='font-size: 12px' href='$pdfPath' target='_blank' class='btn btn-sm btn-primary'>PDF</a>";
                                 } else {
                                     echo "-";
                                 }
                                 echo "</td>";
                                 echo "<td>
-                                        <form method='post' action='lieder.php' onsubmit='return confirm(\"Möchtest du dieses Lied wirklich löschen?\")'>
-                                            <input type='hidden' name='lied_id' value='" . $row["id"] . "'>
-                                            <button type='submit' class='btn btn-danger'>Löschen</button>
-                                        </form>
-                                    </td>";
+                <form method='post' action='lieder.php' onsubmit='return confirm(\"Möchtest du dieses Lied wirklich löschen?\")'>
+                    <input type='hidden' name='lied_id' value='" . $row["id"] . "'>
+                    <button type='submit' style='font-site:12px' class='btn btn-sm btn-danger'>Löschen</button>
+                </form>
+            </td>";
                                 echo "<td>" . $row["hinzugefuegt_am"] . "</td>";
                                 echo "</tr>";
                             }
@@ -88,6 +83,12 @@ include 'auth.php';
                         $conn->close();
                         ?>
                     </div>
+
+                    <script>
+                        $(document).ready(function () {
+                            $('#lieder-table').DataTable();
+                        });
+                    </script>
                 </div>
 
             </div>
