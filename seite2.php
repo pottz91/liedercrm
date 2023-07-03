@@ -123,42 +123,78 @@ $conn->close();
                                         die("Datenbankabfrage fehlgeschlagen: " . $conn->error);
                                     }
                                     ?>
+                                    <div class="table-container">
+                                        <div class="mobile-dropdowns">
+                                            <label for="autor-select">Autor</label>
+                                            <select id="autor-select"
+                                                onchange="toggleColumnVisibility('autor-select', 'autor-column')">
+                                                <option value="visible">Anzeigen</option>
+                                                <option value="hidden" selected>Ausblenden</option>
+                                            </select>
+                                            <label for="benutzer-select">Benutzer</label>
+                                            <select id="benutzer-select"
+                                                onchange="toggleColumnVisibility('benutzer-select', 'benutzer-column')">
+                                                <option value="visible">Anzeigen</option>
+                                                <option value="hidden" selected>Ausblenden</option>
+                                            </select>
+                                        </div>
+                                        <div class="table table-borderless">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Name</th>
+                                                        <th class="optional-column autor-column">Autor</th>
+                                                        <th>Hinzugefügt</th>
+                                                        <th class="optional-column benutzer-column">Benutzer</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <?php
+                                                    if ($result->num_rows > 0) {
+                                                        while ($row = $result->fetch_assoc()) {
+                                                            // Benutzername anhand der Benutzer-ID abrufen
+                                                            $benutzer_id = getBenutzerId($row["autor"]);
+                                                            $benutzername = getBenutzername($benutzer_id);
 
-                                    <div class="table table-borderless">
-                                        <table class="table">
-                                            <thead>
-                                                <tr>
-                                                    <th>Name</th>
-                                                    <th>Autor</th>
-                                                    <th>Hinzugefügt</th>
-                                                    <th>Benutzer</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <?php
-                                                if ($result->num_rows > 0) {
-                                                    while ($row = $result->fetch_assoc()) {
-                                                        // Benutzername anhand der Benutzer-ID abrufen
-                                                        $benutzer_id = getBenutzerId($row["autor"]);
-                                                        $benutzername = getBenutzername($benutzer_id);
-
+                                                            echo "<tr>
+                                <td>" . $row["name"] . "</td>
+                                <td class='optional-column autor-column'>" . $row["autor"] . "</td>
+                                <td>" . $row["hinzugefuegt_am"] . "</td>
+                                <td class='optional-column benutzer-column'>" . $benutzername . "</td>
+                            </tr>";
+                                                        }
+                                                    } else {
                                                         echo "<tr>
-                                                                <td>" . $row["name"] . "</td>
-                                                                <td>" . $row["autor"] . "</td>
-                                                                <td>" . $row["hinzugefuegt_am"] . "</td>
-                                                                <td>" . $benutzername . "</td>
-                                                            </tr>";
+                            <td colspan='4'>Keine Daten vorhanden.</td>
+                        </tr>";
                                                     }
-                                                } else {
-                                                    echo
-                                                        "<tr>
-                                                                <td colspan='4'>Keine Daten vorhanden.</td>
-                                                            </tr>";
-                                                }
-                                                ?>
-                                            </tbody>
-                                        </table>
+                                                    ?>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
+
+                                    <script>
+                                        function toggleColumnVisibility(selectId, columnClass) {
+                                            var select = document.getElementById(selectId);
+                                            var optionValue = select.value;
+                                            var columns = document.getElementsByClassName(columnClass);
+
+                                            for (var i = 0; i < columns.length; i++) {
+                                                if (optionValue === 'hidden') {
+                                                    columns[i].style.display = 'none';
+                                                } else {
+                                                    columns[i].style.display = '';
+                                                }
+                                            }
+                                        }
+
+                                        // Initialer Aufruf der toggleColumnVisibility Funktion
+                                        window.addEventListener('DOMContentLoaded', function () {
+                                            toggleColumnVisibility('autor-select', 'autor-column');
+                                            toggleColumnVisibility('benutzer-select', 'benutzer-column');
+                                        });
+                                    </script>
                                 </div>
                             </div>
                         </div>
