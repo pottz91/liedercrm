@@ -52,38 +52,69 @@
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">
 
-    <footer class="navbar navbar-dark bg-primary fixed-bottom d-md-none">
-        <div id="mobileMenuList" class="container">
-            <div class="row">
-            <div class="d-flex flex-row bd-highlight mb-3">...
-                <div class="p-2 bd-highlight"></div>
-                    <a class="nav-link" href="seite2.php">
-                        <i class="fas fa-fw fa-tachometer-alt"></i>
-                        <span class="menu-font">Dashboard</span>
-                    </a>
-                <div class="p-2 bd-highlight"></div>
-                    <a class="nav-link" href="lieder.php">
-                        <i class="fas fa-fw fa-music"></i>
-                        <span class="menu-font">Lieder</span>
-                    </a>
-                <div class="p-2 bd-highlight"></div>
-                    <a class="nav-link" href="liederadd.php">
-                        <i class="fas fa-fw fa-edit"></i>
-                        <span class="menu-font">Bearbeiten</span>
-                    </a>
-                <div class="p-2 bd-highlight"></div>
-                    <a class="nav-link" href="logout.php">
-                        <i class="fas fa-fw fa-sign-out"></i>
-                        <span class="menu-font">Logout</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <nav class="bg-primary mobile-nav">
+        <a href="seite2.php" class="bloc-icon">
+            <i class="fas fa-home"></i>
+            <span class="menunavcolor">Dashboard</span>
+        </a>
+        <a href="lieder.php" class="bloc-icon">
+            <i class="fas fa-music"></i>
+            <span class="menunavcolor">Lieder</span>
+        </a>
+        <a href="liederadd.php" class="bloc-icon">
+            <i class="fas fa-edit"></i>
+            <span class="menunavcolor">Bearbeiten</span>
+        </a>
+        <a href="logout.php" class="bloc-icon">
+            <i class="fas fa-sign-out"></i>
+            <span class="menunavcolor">Logout</span>
+        </a>
+    </nav>
+
 
 </ul>
 
 <style>
+    .mobile-nav {
+        background: #F1F1F1;
+        position: fixed;
+        bottom: 0;
+        height: 65px;
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+        z-index: 999;
+        /* Fügen Sie einen hohen Z-Index hinzu, um sicherzustellen, dass die Navbar über anderen Elementen liegt */
+    }
+
+    .bloc-icon {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .bloc-icon i {
+        font-size: 20px;
+        color: white;
+    }
+
+    .bloc-icon span {
+        font-size: 12px;
+        margin-top: 5px;
+
+    }
+
+    .menunavcolor {
+        color: white;
+    }
+
+    @media screen and (min-width: 600px) {
+        .mobile-nav {
+            display: none;
+        }
+    }
+
     .menu-font {
         font-size: 16px !important;
         color: #fff !important;
@@ -101,5 +132,4 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
     }
-
 </style>
