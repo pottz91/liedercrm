@@ -40,3 +40,10 @@ CREATE TABLE abspielungen (
   gesamt_abspielungen INT(6),
   FOREIGN KEY (lieder_id) REFERENCES lieder(id)
 );
+
+CREATE TABLE lieder_datum (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    lied_id INT,
+    datum DATE,
+    FOREIGN KEY (lied_id) REFERENCES lieder(id)
+);

@@ -189,6 +189,52 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
                         <button type="submit" class="btn btn-primary">Lied hinzufügen</button>
                     </form>
 
+
+                    // Lieder zu einem Datum hinzufügen
+                    <h1>Lieder zu einem Datum hinzufügen</h1>
+                    <form method="post" action="">
+                        <div class="mb-3">
+                            <label for="lied" class="form-label">Lied:</label>
+                            <select class="form-control" id="lied" name="lied" required>
+                                <?php
+                                // Lieder aus der Datenbank abrufen
+                                $sql = "SELECT id, name FROM lieder";
+                                $result = $conn->query($sql);
+
+                                if ($result->num_rows > 0) {
+                                    while ($row = $result->fetch_assoc()) {
+                                        echo "<option value='" . $row["id"] . "'>" . $row["name"] . "</option>";
+                                    }
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="datum" class="form-label">Datum:</label>
+                            <input type="date" class="form-control" id="datum" name="datum" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Zu Datum hinzufügen</button>
+                    </form>
+                    <?php
+                    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                        if (isset($_POST["lied"]) && isset($_POST["datum"])) {
+                            $liedId = $_POST["lied"];
+                            $datum = $_POST["datum"];
+
+                            $sql = "INSERT INTO lieder_datum (lied_id, datum) VALUES ('$liedId', '$datum')";
+
+                            if ($conn->query($sql) === TRUE) {
+                                echo "<p>Lied wurde erfolgreich zu Datum hinzugefügt.</p>";
+                            } else {
+                                echo "Fehler: " . $sql . "<br>" . $conn->error;
+                            }
+                        }
+                    }
+                    ?>
+
+
+
+
                     <h2>Liederliste</h2>
                     <table class="table">
                         <thead>
@@ -206,10 +252,12 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
                         <tbody>
                             <?php
                             // SQL-Statement zum Abrufen der Lieder aus der Datenbank mit deutschem Datums- und Uhrzeitformat
-                            $sql = "SELECT lieder.id, lieder.name, lieder.autor, lieder.ton, lieder.pdf_attachment, benutzer.benutzername, DATE_FORMAT(STR_TO_DATE(lieder.hinzugefuegt_am, '%Y-%m-%d'), '%d.%m.%Y') AS hinzugefuegt_am_deutsch, COALESCE(abspielungen.gesamt_abspielungen, 0) AS gesamt_abspielungen
-                                    FROM lieder
-                                    LEFT JOIN benutzer ON lieder.benutzer_id = benutzer.id
-                                    LEFT JOIN (SELECT lieder_id, COUNT(*) AS gesamt_abspielungen FROM abspielungen GROUP BY lieder_id) AS abspielungen ON lieder.id = abspielungen.lieder_id";
+                            $sql = "SELECT lieder.id, lieder.name, lieder.autor, lieder.ton, lieder.pdf_attachment, benutzer.benutzername, DATE_FORMAT(lieder_datum.datum, '%d.%m.%Y') AS hinzugefuegt_am_deutsch, COALESCE(abspielungen.gesamt_abspielungen, 0) AS gesamt_abspielungen
+                            FROM lieder
+                            LEFT JOIN benutzer ON lieder.benutzer_id = benutzer.id
+                            LEFT JOIN lieder_datum ON lieder.id = lieder_datum.lied_id
+                            LEFT JOIN (SELECT lieder_id, COUNT(*) AS gesamt_abspielungen FROM abspielungen GROUP BY lieder_id) AS abspielungen ON lieder.id = abspielungen.lieder_id";
+
                             $result = $conn->query($sql);
 
                             // Überprüfen, ob Zeilen in der Abfrageergebnismenge vorhanden sind
@@ -239,7 +287,11 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
                             } else {
                                 echo "<tr><td colspan='8'>Keine Lieder gefunden.</td></tr>";
                             }
+
+
+
                             ?>
+
                         </tbody>
                     </table>
 

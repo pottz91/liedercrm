@@ -8,8 +8,13 @@ include 'auth.php';
 <?php
 include 'datenbank.php';
 
-// SQL-Abfrage ausführen, um die Liederdaten zu erhalten
-$sql = "SELECT name, hinzugefuegt_am FROM lieder ORDER BY hinzugefuegt_am";
+$heute = date("Y-m-d"); // aktuelles Datum im Format 'Y-m-d'
+
+$sql = "SELECT * FROM lieder_datum 
+        JOIN lieder ON lieder_datum.lied_id = lieder.id 
+        WHERE datum >= '$heute' 
+        ORDER BY datum ASC";
+
 $result = $conn->query($sql);
 
 // Überprüfen, ob die Abfrage erfolgreich war
@@ -21,7 +26,7 @@ if ($result === false) {
 $listItems = "";
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        $datum = date("d.m.Y", strtotime($row["hinzugefuegt_am"]));
+        $datum = date("d.m.Y", strtotime($row["datum"])); // Hier die Änderung
         $class = ($datum == date("d.m.Y")) ? "text-success" : ""; // Hervorhebung für das aktuelle Datum
         $listItems .= "<li class='py-2 {$class}'>" . $row["name"] . " - " . $datum . "</li>";
         $listItems .= "<hr class='my-1'>"; // Trennstrich
