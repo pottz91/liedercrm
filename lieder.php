@@ -32,25 +32,34 @@ include 'auth.php';
                         <p>Auf dieser Seite hast du einen Überblick über deine <b>Lieder</b></p>
                         <?php
                         include 'datenbank.php';
-
                         if (isset($_POST["lied_id"])) {
                             $liedId = $_POST["lied_id"];
 
-                            // SQL-Statement zum Löschen des Lieds
-                            $sql = "DELETE FROM lieder WHERE id = $liedId";
+                            // SQL-Statement zum Löschen des Eintrags in der Tabelle "abspielungen"
+                            $deleteAbspielungenSQL = "DELETE FROM abspielungen WHERE lieder_id = $liedId";
 
-                            if ($conn->query($sql) === TRUE) {
-                                echo "<p>Lied wurde erfolgreich gelöscht.</p>";
+                            // Führe das SQL-Statement aus, um den Eintrag zu löschen
+                            if ($conn->query($deleteAbspielungenSQL) === TRUE) {
+                                // Der Eintrag wurde erfolgreich gelöscht, jetzt kannst du den Datensatz in der Tabelle "lieder" löschen
+                                $deleteLiedSQL = "DELETE FROM lieder WHERE id = $liedId";
+
+                                if ($conn->query($deleteLiedSQL) === TRUE) {
+                                    echo "<p>Lied wurde erfolgreich gelöscht.</p>";
+                                } else {
+                                    echo "Fehler: " . $deleteLiedSQL . "<br>" . $conn->error;
+                                }
                             } else {
-                                echo "Fehler: " . $sql . "<br>" . $conn->error;
+                                echo "Fehler: " . $deleteAbspielungenSQL . "<br>" . $conn->error;
                             }
                         }
+
+
 
                         $sql = "SELECT id, name, autor, ton, pdf_attachment, DATE_FORMAT(hinzugefuegt_am, '%d.%m.%Y') AS hinzugefuegt_am FROM lieder ORDER BY name ASC";
                         $result = $conn->query($sql);
 
                         if ($result->num_rows > 0) {
-                            echo "<table id='lieder-table' class='table '>";
+                            echo "<table id='lieder-table' class='table-responsive'>";
                             echo "<thead><tr><th>Name</th><th>Autor</th><th>Tonart</th><th>Datei</th><th>Aktionen</th><th>Datum</th></tr></thead>";
                             echo "<tbody>";
                             while ($row = $result->fetch_assoc()) {
@@ -61,7 +70,7 @@ include 'auth.php';
                                 echo "<td>";
                                 if (!empty($row["pdf_attachment"])) {
                                     $pdfPath = "pdf/" . $row["pdf_attachment"];
-                                    echo "<a style='font-size: 12px' href='$pdfPath' target='_blank' class='btn btn-sm btn-primary'>PDF</a>";
+                                    echo "<a style='font-size: 12px' href='$pdfPath' target='_blank' class='btn btn-sm btn-primary'>PDF öffnen</a>";
                                 } else {
                                     echo "-";
                                 }

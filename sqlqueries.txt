@@ -47,3 +47,13 @@ CREATE TABLE lieder_datum (
     datum DATE,
     FOREIGN KEY (lied_id) REFERENCES lieder(id)
 );
+
+// Damit das Löschen durch die has_many beziehung auch funktionier..
+
+ALTER TABLE lieder_datum
+DROP FOREIGN KEY lieder_datum_ibfk_1;
+
+ALTER TABLE lieder_datum
+ADD CONSTRAINT lieder_datum_ibfk_1
+FOREIGN KEY (lied_id) REFERENCES lieder(id)
+ON DELETE CASCADE;
