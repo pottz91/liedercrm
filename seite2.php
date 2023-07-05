@@ -1,5 +1,4 @@
 <?php
-include 'header.php';
 include 'datenbank.php';
 include 'auth.php';
 ?>

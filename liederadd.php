@@ -1,6 +1,5 @@
 <?php
 include 'auth.php';
-include 'header.php';
 include 'datenbank.php';
 
 // Überprüfen, ob das Formular zum Hinzufügen oder Bearbeiten abgeschickt wurde
