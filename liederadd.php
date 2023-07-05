@@ -205,7 +205,8 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
                             <div class="mb-3">
                                 <label for="hinzugefuegt_am" class="form-label">Hinzugefügt am:</label>
                                 <input type="date" class="form-control" id="hinzugefuegt_am" name="hinzugefuegt_am"
-                                    required>
+                                    value="<?php echo date('Y-m-d'); ?>" required>
+
                             </div>
                             <input type="hidden" name="action" value="add">
                             <button type="submit" class="btn btn-primary">Lied hinzufügen</button>
@@ -270,7 +271,7 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
 
 
                         <h2>Liederliste</h2>
-                        <table id="liederTable" class="table table-striped">
+                        <table id="liederTable" class="table table-responsive table-striped">
                             <thead>
                                 <tr>
                                     <th>Name</th>
@@ -287,10 +288,10 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
                                 <?php
                                 // SQL-Statement zum Abrufen der Lieder aus der Datenbank mit deutschem Datums- und Uhrzeitformat
                                 $sql = "SELECT lieder.id, lieder.name, lieder.autor, lieder.ton, lieder.pdf_attachment, benutzer.benutzername, DATE_FORMAT(lieder_datum.datum, '%d.%m.%Y') AS hinzugefuegt_am_deutsch, COALESCE(abspielungen.gesamt_abspielungen, 0) AS gesamt_abspielungen
-                FROM lieder
-                LEFT JOIN benutzer ON lieder.benutzer_id = benutzer.id
-                LEFT JOIN lieder_datum ON lieder.id = lieder_datum.lied_id
-                LEFT JOIN (SELECT lieder_id, COUNT(*) AS gesamt_abspielungen FROM abspielungen GROUP BY lieder_id) AS abspielungen ON lieder.id = abspielungen.lieder_id";
+            FROM lieder
+            LEFT JOIN benutzer ON lieder.benutzer_id = benutzer.id
+            LEFT JOIN lieder_datum ON lieder.id = lieder_datum.lied_id
+            LEFT JOIN (SELECT lieder_id, COUNT(*) AS gesamt_abspielungen FROM abspielungen GROUP BY lieder_id) AS abspielungen ON lieder.id = abspielungen.lieder_id";
 
                                 $result = $conn->query($sql);
 
@@ -306,21 +307,21 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
                                         }
 
                                         echo "<tr>
-                        <td>" . $row["name"] . "</td>
-                        <td>" . $row["autor"] . "</td>
-                        <td>" . $row["ton"] . "</td>
-                        <td>$pdfButton</td>
-                        <td>" . $row["benutzername"] . "</td>
-                        <td>
+                    <td>" . $row["name"] . "</td>
+                    <td>" . $row["autor"] . "</td>
+                    <td>" . $row["ton"] . "</td>
+                    <td>$pdfButton</td>
+                    <td>" . $row["benutzername"] . "</td>
+                    <td>
                         <button type='button' class='btn btn-sm btn-warning' data-bs-toggle='modal' data-bs-target='#editModal' data-id='" . $row["id"] . "' data-name='" . $row["name"] . "' data-autor='" . $row["autor"] . "' data-ton='" . $row["ton"] . "' data-pdf='" . $row["pdf_attachment"] . "'>Bearbeiten</button>
                         <form method='post' action='liederadd.php' onsubmit='return confirm(\"Möchtest du dieses Lied wirklich löschen?\")'>
-                        <input type='hidden' name='lied_id' value='" . $row["id"] . "'>
-                        <button type='submit' style='font-site:12px' class='btn btn-sm btn-danger'>Löschen</button>
-                    </form>
+                            <input type='hidden' name='lied_id' value='" . $row["id"] . "'>
+                            <button type='submit' style='font-size:12px' class='btn btn-sm btn-danger'>Löschen</button>
+                        </form>
                     </td>
-                        <td>" . $row["hinzugefuegt_am_deutsch"] . "</td>
-                        <td>" . $row["gesamt_abspielungen"] . "</td>
-                    </tr>";
+                    <td>" . $row["hinzugefuegt_am_deutsch"] . "</td>
+                    <td>" . $row["gesamt_abspielungen"] . "</td>
+                </tr>";
                                     }
                                 } else {
                                     echo "<tr><td colspan='8'>Keine Lieder gefunden.</td></tr>";
