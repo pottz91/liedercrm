@@ -1,6 +1,7 @@
 <?php
+include 'header.php';
 include 'datenbank.php';
-include 'auth.php';
+// include 'auth.php';
 ?>
 
 
@@ -106,13 +107,14 @@ $conn->close();
                                     </div>
                                 </div>
 
-                                <div class="scrollable-list">
+                                <!--<div class="scrollable-list">
                                     <style>
                                         .scrollable-list {
                                             max-height: 400px;
                                             overflow-y: auto;
                                         }
                                     </style>
+                                </div>-->
                                     <!-- Card Body -->
 
                                     <?php
@@ -127,32 +129,45 @@ $conn->close();
                                         die("Datenbankabfrage fehlgeschlagen: " . $conn->error);
                                     }
                                     ?>
+
                                     <div class="table-container">
                                         <div class="mobile-dropdowns">
                                             <label for="autor-select">Autor</label>
-                                            <select id="autor-select"
-                                                onchange="toggleColumnVisibility('autor-select', 'autor-column')">
+                                            <select id="autor-select" onchange="toggleColumnVisibility('autor-select', 'autor-column')">
                                                 <option value="visible">Anzeigen</option>
                                                 <option value="hidden" selected>Ausblenden</option>
                                             </select>
                                             <label for="benutzer-select">Benutzer</label>
-                                            <select id="benutzer-select"
-                                                onchange="toggleColumnVisibility('benutzer-select', 'benutzer-column')">
+                                            <select id="benutzer-select" onchange="toggleColumnVisibility('benutzer-select', 'benutzer-column')">
                                                 <option value="visible">Anzeigen</option>
                                                 <option value="hidden" selected>Ausblenden</option>
                                             </select>
                                         </div>
                                         <div class="table table-borderless">
-                                            <table class="table">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Name</th>
-                                                        <th class="optional-column autor-column">Autor</th>
-                                                        <th>Hinzugefügt</th>
-                                                        <th class="optional-column benutzer-column">Benutzer</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
+                                            <div class="scrollable-list">
+                                                <table class="table">
+                                                    <thead class="sticky-header">
+                                                        <tr>
+                                                            <th>Name</th>
+                                                            <th class="optional-column autor-column">Autor</th>
+                                                            <th>Hinzugefügt</th>
+                                                            <th class="optional-column benutzer-column">Benutzer</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <style>
+                                                    .scrollable-list {
+                                                        max-height: 400px;
+                                                        overflow-y: auto;
+                                                    }
+
+                                                    .sticky-header {
+                                                        position: sticky;
+                                                        top: 0;
+                                                        background-color: #fff;
+                                                        z-index: 1;
+                                                    }
+                                                    </style>
+                                                <tbody>    
                                                     <?php
                                                     if ($result->num_rows > 0) {
                                                         while ($row = $result->fetch_assoc()) {
@@ -161,24 +176,25 @@ $conn->close();
                                                             $benutzername = getBenutzername($benutzer_id);
 
                                                             echo "<tr>
-                <td>" . $row["name"] . "</td>
-                <td class='optional-column autor-column'>" . $row["autor"] . "</td>
-                <td>" . $row["hinzugefuegt_am"] . "</td>
-                <td class='optional-column benutzer-column'>" . $benutzername . "</td>
-            </tr>
-            <tr>
-                <td colspan='4'><hr class='my-1'></td>
-            </tr>";
+                                                            <td>" . $row["name"] . "</td>
+                                                            <td class='optional-column autor-column'>" . $row["autor"] . "</td>
+                                                            <td>" . $row["hinzugefuegt_am"] . "</td>
+                                                            <td class='optional-column benutzer-column'>" . $benutzername . "</td>
+                                                            </tr>
+                                                            <tr>
+                                                            <td colspan='4'><hr class='my-1'></td>
+                                                            </tr>";
                                                         }
                                                     } else {
                                                         echo "<tr>
-            <td colspan='4'>Keine Daten vorhanden.</td>
-        </tr>";
+                                                            <td colspan='4'>Keine Daten vorhanden.</td>
+                                                            </tr>";
                                                     }
                                                     ?>
-
+                                                    
                                                 </tbody>
                                             </table>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -203,7 +219,7 @@ $conn->close();
                                             toggleColumnVisibility('benutzer-select', 'benutzer-column');
                                         });
                                     </script>
-                                </div>
+                                <!--</div>-->
                             </div>
                         </div>
 
