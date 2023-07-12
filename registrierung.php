@@ -49,34 +49,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $conn->close();
 ?>
 
-<!DOCTYPE html>
-<html lang="de">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrierung</title>
-</head>
-
-<body>
+<body style="background-color: #171c45;">
     <div class="container">
-        <h1>Registrierung</h1>
-        <form method="post" action="registrierung.php">
-            <div class="mb-3">
-                <label for="benutzername" class="form-label">Benutzername</label>
-                <input type="text" class="form-control" id="benutzername" name="benutzername">
+        <div class="card o-hidden border-0 shadow-lg my-5">
+            <div class="card-body p-0">
+                <!-- Nested Row within Card Body -->
+                <div class="row">
+                    <div class="col-lg-5 d-none d-lg-block bg-register-image"></div>
+                    <div class="col-lg-7">
+                        <div class="p-5">
+                            <div class="text-center">
+                                <h1 class="h4 text-gray-900 mb-4">Account erstellen</h1>
+                            </div>
+                            <form class="user" method="POST" action="">
+                                <div class="form-group">
+                                    <input type="text" class="form-control form-control-user" name="benutzername"
+                                        placeholder="Benutzername">
+                                </div>
+                                <div class="form-group">
+                                    <input type="password" class="form-control form-control-user" name="passwort"
+                                        placeholder="Passwort">
+                                </div>
+                                <div class="form-group">
+                                    <input type="password" class="form-control form-control-user" name="passwort2"
+                                        placeholder="Passwort wiederholen">
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-user btn-block">
+                                    Account registrieren
+                                </button>
+
+                            </form>
+                            <hr>
+                            <div class="text-center">
+                                <a class="small" href="password.php">Passwort vergessen?</a>
+                            </div>
+                            <div class="text-center">
+                                <a class="small" href="index.php">Bereits einen Account? Einloggen!</a>
+                            </div>
+                            <div class="pt-2 text-center" style="font-size:12px">
+                                <i>Siehe, ich komme bald und mein Lohn mit mir, zu geben einem jeglichen, wie seine
+                                    Werke
+                                    sein werden. Ich bin das A und das O, der Erste und der Letzte, der Anfang und das
+                                    Ende.
+                                    Offenbarung 22,12-13:</i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="mb-3">
-                <label for="passwort" class="form-label">Passwort</label>
-                <input type="password" class="form-control" id="passwort" name="passwort">
-            </div>
-            <div class="mb-3">
-                <label for="passwort2" class="form-label">Passwort wiederholen</label>
-                <input type="password" class="form-control" id="passwort2" name="passwort2">
-            </div>
-            <button type="submit" class="btn btn-primary">Registrieren</button>
-        </form>
+        </div>
     </div>
 </body>
-
-</html>

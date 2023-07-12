@@ -16,7 +16,7 @@ include 'auth.php';
         <div id="content-wrapper" class="d-flex flex-column">
             <?php include 'topbar.php'; ?>
             <!-- Main Content -->
-            <div id="content" style="margin-bottom: 200px">
+            <div id="content" class="container" style="margin-bottom: 200px">
                 <form action="" method="get">
                     <label for="zeitraum">Zeitraum:</label>
                     <select name="zeitraum" id="zeitraum" onchange="this.form.submit()">

@@ -283,7 +283,7 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
 
                         <h2>Liederliste</h2>
                         <div class="dropdown pt-2 pb-2">
-                            <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="columnDropdown"
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="columnDropdown"
                                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 Spalten auswählen
                             </button>
@@ -480,18 +480,45 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
             });
         </script>
 
-
         <script>
             $(document).ready(function () {
                 var table = $('#liederTable').DataTable();
 
+                // Funktion zum Speichern der Auswahl in Local Storage
+                function saveColumnSelection() {
+                    var selectedColumns = [];
+                    $('.dropdown-menu input[type="checkbox"]').each(function () {
+                        if ($(this).is(':checked')) {
+                            selectedColumns.push($(this).attr('data-column'));
+                        }
+                    });
+                    localStorage.setItem('selectedColumns', JSON.stringify(selectedColumns));
+                }
+
+                // Funktion zum Laden der Auswahl aus Local Storage
+                function loadColumnSelection() {
+                    var selectedColumns = JSON.parse(localStorage.getItem('selectedColumns'));
+                    if (selectedColumns) {
+                        selectedColumns.forEach(function (columnIndex) {
+                            var column = table.column(columnIndex);
+                            column.visible(true);
+                            $('#checkbox' + columnIndex).prop('checked', true);
+                        });
+                    }
+                }
+
+                // Auswahl laden, wenn die Seite geladen wird
+                loadColumnSelection();
+
                 $('.dropdown-menu input[type="checkbox"]').on('change', function () {
                     var column = table.column($(this).attr('data-column'));
                     column.visible(!column.visible());
+
+                    // Auswahl speichern, wenn sich eine Checkbox ändert
+                    saveColumnSelection();
                 });
             });
         </script>
-
 
         <script>
             // Modal öffnen und Liedinformationen setzen
