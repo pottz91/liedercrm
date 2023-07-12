@@ -57,3 +57,6 @@ ALTER TABLE lieder_datum
 ADD CONSTRAINT lieder_datum_ibfk_1
 FOREIGN KEY (lied_id) REFERENCES lieder(id)
 ON DELETE CASCADE;
+
+
+ALTER TABLE lieder ADD tags VARCHAR(255);

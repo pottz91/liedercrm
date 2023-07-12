@@ -35,7 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
     <title>Login</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-       <link rel="stylesheet" href="./ressource/css/style.css">
+    <link rel="stylesheet" href="./ressource/css/style.css">
     <link rel="stylesheet" href="./ressource/css/sb-admin-2.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
@@ -50,6 +50,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script src="./ressource/js/sb-admin-2.js"></script>
     <script src="./ressource/js/jquery.easing.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@2.2.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css"
+        integrity="sha512-NhSC1YmyruXifcj/KFRWoC561YpHpc5Jtzgvbuzx5VozKpWvQ+4nXhPdFgmx8xqexRcpAglTj9sIBWINXa8x5w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8">
@@ -60,7 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script src="https://cdn.datatables.net/v/bs5/dt-1.13.4/datatables.min.js"></script>
 </head>
 
-<body class="bg-gradient-primary">
+<body style="background-color: #171c45;">
     <div class="container">
         <!-- Äußere Reihe -->
         <div class="row justify-content-center">
@@ -95,7 +98,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         <a class="small" href="forgot-password.html">Passwort vergessen?</a>
                                     </div>
                                     <div class="text-center">
-                                        <a class="small" href="register.html">Ein Konto erstellen!</a>
+                                        <a class="small" href="registrierung.php">Ein Konto erstellen!</a>
                                     </div>
                                     <hr>
                                     <div class="text-center" style="font-size:12px">

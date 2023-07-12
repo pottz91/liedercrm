@@ -1,14 +1,15 @@
-<nav style="background-color: #171c45; !important;" class="navbar navbar-expand navbar-light  topbar mb-4 static-top shadow">
+<nav style="background-color: #171c45; !important;"
+    class="navbar navbar-expand navbar-light  topbar mb-4 static-top shadow">
 
-  <div class="sidebar-brand-icon">
-            <img class="d-md-none img-profile "  width="95px" src="./img/logo.jpg">
-        </div>
+    <div class="sidebar-brand-icon">
+        <img class="p-1 d-md-none img-profile " width="95px" src="./img/logo.jpg">
+    </div>
 
 
     <!-- Topbar Navbar -->
     <ul class="navbar-nav ml-auto">
 
- 
+
 
 
         <div class="topbar-divider d-none d-sm-block"></div>

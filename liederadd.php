@@ -8,6 +8,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Hinzufügen eines neuen Lieds
         if ($_POST["action"] == "add") {
             $name = $_POST["name"];
+            $tags = $_POST["tags"];
             $autor = $_POST["autor"];
             $ton = $_POST["ton"];
             $pdf_attachment = '';
@@ -73,7 +74,10 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
 
             $conn->query($abspielungenQuery);
 
-            $sql = "INSERT INTO lieder (name, autor, ton, pdf_attachment, hinzugefuegt_am, benutzer_id) VALUES ('$name', '$autor', '$ton', '$pdf_attachment', '$hinzugefuegt_am', '$benutzer_id')";
+
+
+            $sql = "INSERT INTO lieder (name, autor, ton, pdf_attachment, hinzugefuegt_am, benutzer_id, tags)
+            VALUES ('$name', '$autor', '$ton', '$pdf_attachment', '$hinzugefuegt_am', '$benutzer_id', '$tags')";
 
             if ($conn->query($sql) === TRUE) {
                 $id = $conn->insert_id; // Abrufen der ID des gerade hinzugefügten Liedes
@@ -102,6 +106,7 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
             $name = $_POST["editName"];
             $autor = $_POST["editAutor"];
             $ton = $_POST["editTon"];
+            $tags = $_POST["tags"];
             $datum = $_POST["editHinzugefuegt_am"];
 
             // Überprüfen, ob ein PDF-Anhang hochgeladen wurde
@@ -135,7 +140,7 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
             }
 
             // SQL-Statement zum Aktualisieren des Lieds in der Datenbank
-            $sql = "UPDATE lieder SET name='$name', autor='$autor', ton='$ton', pdf_attachment='$pdf_attachment', hinzugefuegt_am='$datum' WHERE id=$id";
+            $sql = "UPDATE lieder SET name='$name', autor='$autor', tags='$tags', ton='$ton', pdf_attachment='$pdf_attachment', hinzugefuegt_am='$datum' WHERE id=$id";
 
             if ($conn->query($sql) === TRUE) {
                 echo "<p>Lied wurde erfolgreich aktualisiert.</p>";
@@ -218,6 +223,11 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
                                 <input type="date" class="form-control" id="hinzugefuegt_am" name="hinzugefuegt_am"
                                     value="<?php echo date('Y-m-d'); ?>" required>
 
+                            </div>
+                            <div class="mb-3">
+                                <label for="tags" class="form-label">Tags:</label>
+                                <input type="text" class="form-control" name="tags" id="editTags">
+                                <small>Gib Tags durch Kommas getrennt ein (z.B. Kategorie1, Kategorie2).</small>
                             </div>
                             <input type="hidden" name="action" value="add">
                             <button type="submit" class="btn btn-primary">Lied hinzufügen</button>
@@ -344,10 +354,17 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
                                         Gesamt Abspielungen
                                     </label>
                                 </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="checkboxTags" data-column="5"
+                                        checked>
+                                    <label class="form-check-label" for="checkboxTags">
+                                        Kategorien
+                                    </label>
+                                </div>
                             </div>
                         </div>
 
-                        <table id="liederTable" class="table  table-responsive-sm table-striped">
+                        <table id="liederTable" class="table table-responsive-sm table-striped">
                             <thead>
                                 <tr>
                                     <th>Name</th>
@@ -355,6 +372,7 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
                                     <th>Tonart</th>
                                     <th>Datei</th>
                                     <th>Benutzername</th>
+                                    <th>Kategorien</th>
                                     <th>Aktionen</th>
                                     <th>Datum</th>
                                     <th>Gesamt Abspielungen</th>
@@ -363,12 +381,11 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
                             <tbody>
                                 <?php
                                 // SQL-Statement zum Abrufen der Lieder aus der Datenbank mit deutschem Datums- und Uhrzeitformat
-                                $sql = "SELECT lieder.id, lieder.name, lieder.autor, lieder.ton, lieder.pdf_attachment, benutzer.benutzername, COALESCE(DATE_FORMAT(lieder_datum.datum, '%d.%m.%Y'), DATE_FORMAT(lieder.hinzugefuegt_am, '%d.%m.%Y')) AS datum, COALESCE(abspielungen.gesamt_abspielungen, 0) AS gesamt_abspielungen
-                                FROM lieder
-                                LEFT JOIN benutzer ON lieder.benutzer_id = benutzer.id
-                                LEFT JOIN lieder_datum ON lieder.id = lieder_datum.lied_id
-                                LEFT JOIN (SELECT lieder_id, COUNT(*) AS gesamt_abspielungen FROM abspielungen GROUP BY lieder_id) AS abspielungen ON lieder.id = abspielungen.lieder_id";
-
+                                $sql = "SELECT lieder.id, lieder.name, lieder.autor, lieder.ton, lieder.pdf_attachment, benutzer.benutzername, lieder.tags, COALESCE(DATE_FORMAT(lieder_datum.datum, '%d.%m.%Y'), DATE_FORMAT(lieder.hinzugefuegt_am, '%d.%m.%Y')) AS datum, COALESCE(abspielungen.gesamt_abspielungen, 0) AS gesamt_abspielungen
+        FROM lieder
+        LEFT JOIN benutzer ON lieder.benutzer_id = benutzer.id
+        LEFT JOIN lieder_datum ON lieder.id = lieder_datum.lied_id
+        LEFT JOIN (SELECT lieder_id, COUNT(*) AS gesamt_abspielungen FROM abspielungen GROUP BY lieder_id) AS abspielungen ON lieder.id = abspielungen.lieder_id";
 
                                 $result = $conn->query($sql);
 
@@ -383,15 +400,22 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
                                             $pdfButton = "<a href='$pdfPath' target='_blank' class='btn btn-sm btn-primary'>PDF</a>";
                                         }
 
+                                        // Tags als Badges generieren
+                                        $tags = explode(",", $row["tags"]);
+                                        $tagBadges = "";
+                                        foreach ($tags as $tag) {
+                                            $tagBadges .= "<span class='badge bg-secondary'>$tag</span> ";
+                                        }
+
                                         echo "<tr>
                     <td>" . $row["name"] . "</td>
                     <td>" . $row["autor"] . "</td>
                     <td>" . $row["ton"] . "</td>
                     <td>$pdfButton</td>
                     <td>" . $row["benutzername"] . "</td>
+                    <td>" . $tagBadges . "</td>
                     <td>
-                        <button type='button' class='btn btn-sm btn-warning' data-bs-toggle='modal' data-bs-target='#editModal' data-id='" . $row["id"] . "' data-name='" . $row["name"] . "' data-autor='" . $row["autor"] . "' data-ton='" . $row["ton"] . "' data-pdf='" . $row["pdf_attachment"] . "'>Bearbeiten</button>
-                      
+                    <button type='button' class='btn btn-sm btn-warning' data-bs-toggle='modal' data-bs-target='#editModal' data-id='" . $row["id"] . "' data-name='" . $row["name"] . "' data-autor='" . $row["autor"] . "' data-ton='" . $row["ton"] . "' data-pdf='" . $row["pdf_attachment"] . "' data-tags='" . $row["tags"] . "'>Bearbeiten</button>
                     </td>
                     <td>" . $row["datum"] . "</td>
                     <td>" . $row["gesamt_abspielungen"] . "</td>
@@ -403,7 +427,6 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
                                 ?>
                             </tbody>
                         </table>
-
                         <!-- Modal für die Bearbeitung -->
                         <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel"
                             aria-hidden="true">
@@ -431,6 +454,12 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
                                                 <input type="text" class="form-control" id="editTon" name="editTon"
                                                     required>
                                             </div>
+                                            <div class="mb-3">
+                                                <label for="editTags" class="form-label">Tags</label>
+                                                <input type="text" class="form-control" id="editTagsModal" name="tags"
+                                                    value="">
+                                            </div>
+
                                             <div class="mb-3">
                                                 <label for="editPdfAttachment" class="form-label">PDF-Anhang:</label>
                                                 <input type="file" class="form-control" id="editPdfAttachment"
@@ -542,6 +571,10 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
                 document.getElementById('editName').value = name;
                 document.getElementById('editAutor').value = autor;
                 document.getElementById('editTon').value = ton;
+                document.getElementById('editTagsModal').value = button.getAttribute('data-tags');
+
+
+
                 document.getElementById('editPdfAttachmentExisting').value = pdf;
                 document.getElementById('editHinzugefuegt_am').value = datum;
 
