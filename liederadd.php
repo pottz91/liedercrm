@@ -193,7 +193,7 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
             <!-- Begin Page Content -->
             <div class="container-fluid p-4">
                 <div class="row">
-                    <div class="p-2 col-md-6 col-lg-6 col-xl-6 card card-body">
+                    <div class="p-2 col-md-3 col-lg-3 col-xl-3 card card-body">
                         <h1>Lieder hinzufügen</h1>
                         <form method="post" action="" enctype="multipart/form-data">
                             <div class="mb-3">
@@ -276,13 +276,13 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
                             });
                         });
                     </script>
-                    <div class="col-md-6 col-lg-6 col-xl-6 card card-body"">
+                    <div class="col-md-9 col-lg-9 col-xl-9 card card-body"">
                         <div class=" content">
 
 
 
                         <h2>Liederliste</h2>
-                        <table id="liederTable" class="table table-responsive table-striped">
+                        <table id="liederTable" class="table  table-responsive-sm table-striped">
                             <thead>
                                 <tr>
                                     <th>Name</th>
@@ -420,13 +420,16 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
                 document.getElementById('editPdfAttachmentExisting').value = pdf;
                 document.getElementById('editHinzugefuegt_am').value = datum;
 
-    });
+            });
         </script>
     </div>
 </div>
-
-
-
+<style>
+    @media only screen and (max-width: 850px) {
+        div.dataTables_wrapper div.dataTables_filter input {
+            width: 100px !important;
+        }
+</style>
 
 
 </body>

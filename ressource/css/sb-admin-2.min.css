@@ -2057,7 +2057,7 @@ pre code {
     background-color: rgba(255, 255, 255, .075)
 }
 
-@media (max-width:575.98px) {
+@media (max-width:850.98px) {
     .table-responsive-sm {
         display: block;
         width: 100%;
@@ -7165,7 +7165,7 @@ button.bg-dark:hover {
 }
 
 .border-success {
-    border-color: #1cc88a !important
+    border-color: #025428 !important
 }
 
 .border-info {
@@ -11256,7 +11256,7 @@ a:focus {
 }
 
 .border-left-success {
-    border-left: .25rem solid #1cc88a !important
+    border-left: .25rem solid #21623f !important
 }
 
 .border-bottom-success {
@@ -11314,6 +11314,14 @@ a:focus {
 .rotate-n-15 {
     transform: rotate(-15deg)
 }
+
+div.dataTables_wrapper div.dataTables_filter input {
+    width: 125px !important;
+}
+
+
+
+
 
 .dropdown .dropdown-menu {
     font-size: .85rem

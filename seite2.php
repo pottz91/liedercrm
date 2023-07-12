@@ -116,46 +116,48 @@ $conn->close();
                                         }
                                     </style>
                                 </div>-->
-                                    <!-- Card Body -->
+                                <!-- Card Body -->
 
-                                    <?php
-                                    include 'datenbank.php';
+                                <?php
+                                include 'datenbank.php';
 
-                                    // SQL-Abfrage ausführen, um die Liederdaten zu erhalten
-                                    $sql = "SELECT name, autor, hinzugefuegt_am FROM lieder ORDER BY hinzugefuegt_am DESC";
-                                    $result = $conn->query($sql);
+                                // SQL-Abfrage ausführen, um die Liederdaten zu erhalten
+                                $sql = "SELECT name, autor, hinzugefuegt_am FROM lieder ORDER BY hinzugefuegt_am DESC";
+                                $result = $conn->query($sql);
 
-                                    // Überprüfen, ob die Abfrage erfolgreich war
-                                    if ($result === false) {
-                                        die("Datenbankabfrage fehlgeschlagen: " . $conn->error);
-                                    }
-                                    ?>
+                                // Überprüfen, ob die Abfrage erfolgreich war
+                                if ($result === false) {
+                                    die("Datenbankabfrage fehlgeschlagen: " . $conn->error);
+                                }
+                                ?>
 
-                                    <div class="table-container">
-                                        <div class="mobile-dropdowns">
-                                            <label for="autor-select">Autor</label>
-                                            <select id="autor-select" onchange="toggleColumnVisibility('autor-select', 'autor-column')">
-                                                <option value="visible">Anzeigen</option>
-                                                <option value="hidden" selected>Ausblenden</option>
-                                            </select>
-                                            <label for="benutzer-select">Benutzer</label>
-                                            <select id="benutzer-select" onchange="toggleColumnVisibility('benutzer-select', 'benutzer-column')">
-                                                <option value="visible">Anzeigen</option>
-                                                <option value="hidden" selected>Ausblenden</option>
-                                            </select>
-                                        </div>
-                                        <div class="table table-borderless">
-                                            <div class="scrollable-list">
-                                                <table class="table">
-                                                    <thead class="sticky-header">
-                                                        <tr>
-                                                            <th>Name</th>
-                                                            <th class="optional-column autor-column">Autor</th>
-                                                            <th>Hinzugefügt</th>
-                                                            <th class="optional-column benutzer-column">Benutzer</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <style>
+                                <div class="table-container">
+                                    <div class="mobile-dropdowns">
+                                        <label for="autor-select">Autor</label>
+                                        <select id="autor-select"
+                                            onchange="toggleColumnVisibility('autor-select', 'autor-column')">
+                                            <option value="visible">Anzeigen</option>
+                                            <option value="hidden" selected>Ausblenden</option>
+                                        </select>
+                                        <label for="benutzer-select">Benutzer</label>
+                                        <select id="benutzer-select"
+                                            onchange="toggleColumnVisibility('benutzer-select', 'benutzer-column')">
+                                            <option value="visible">Anzeigen</option>
+                                            <option value="hidden" selected>Ausblenden</option>
+                                        </select>
+                                    </div>
+                                    <div class="table table-borderless">
+                                        <div class="scrollable-list">
+                                            <table class="table">
+                                                <thead class="sticky-header">
+                                                    <tr>
+                                                        <th>Name</th>
+                                                        <th class="optional-column autor-column">Autor</th>
+                                                        <th>Hinzugefügt</th>
+                                                        <th class="optional-column benutzer-column">Benutzer</th>
+                                                    </tr>
+                                                </thead>
+                                                <style>
                                                     .scrollable-list {
                                                         max-height: 400px;
                                                         overflow-y: auto;
@@ -167,8 +169,8 @@ $conn->close();
                                                         background-color: #fff;
                                                         z-index: 1;
                                                     }
-                                                    </style>
-                                                <tbody>    
+                                                </style>
+                                                <tbody>
                                                     <?php
                                                     if ($result->num_rows > 0) {
                                                         while ($row = $result->fetch_assoc()) {
@@ -192,34 +194,34 @@ $conn->close();
                                                             </tr>";
                                                     }
                                                     ?>
-                                                    
+
                                                 </tbody>
                                             </table>
-                                            </div>
                                         </div>
                                     </div>
+                                </div>
 
-                                    <script>
-                                        function toggleColumnVisibility(selectId, columnClass) {
-                                            var select = document.getElementById(selectId);
-                                            var optionValue = select.value;
-                                            var columns = document.getElementsByClassName(columnClass);
+                                <script>
+                                    function toggleColumnVisibility(selectId, columnClass) {
+                                        var select = document.getElementById(selectId);
+                                        var optionValue = select.value;
+                                        var columns = document.getElementsByClassName(columnClass);
 
-                                            for (var i = 0; i < columns.length; i++) {
-                                                if (optionValue === 'hidden') {
-                                                    columns[i].style.display = 'none';
-                                                } else {
-                                                    columns[i].style.display = '';
-                                                }
+                                        for (var i = 0; i < columns.length; i++) {
+                                            if (optionValue === 'hidden') {
+                                                columns[i].style.display = 'none';
+                                            } else {
+                                                columns[i].style.display = '';
                                             }
                                         }
+                                    }
 
-                                        // Initialer Aufruf der toggleColumnVisibility Funktion
-                                        window.addEventListener('DOMContentLoaded', function () {
-                                            toggleColumnVisibility('autor-select', 'autor-column');
-                                            toggleColumnVisibility('benutzer-select', 'benutzer-column');
-                                        });
-                                    </script>
+                                    // Initialer Aufruf der toggleColumnVisibility Funktion
+                                    window.addEventListener('DOMContentLoaded', function () {
+                                        toggleColumnVisibility('autor-select', 'autor-column');
+                                        toggleColumnVisibility('benutzer-select', 'benutzer-column');
+                                    });
+                                </script>
                                 <!--</div>-->
                             </div>
                         </div>
@@ -297,8 +299,8 @@ $conn->close();
                                                     <?php
                                                     // SQL-Abfrage ausführen, um die Gesamtzahl der Abspielungen der Lieder zu erhalten
                                                     $sql = "SELECT lieder.name, COALESCE(abspielungen.gesamt_abspielungen, 0) AS gesamt_abspielungen
-            FROM lieder
-            LEFT JOIN abspielungen ON lieder.id = abspielungen.lieder_id";
+                                    FROM lieder
+                                    LEFT JOIN abspielungen ON lieder.id = abspielungen.lieder_id";
                                                     $result = $conn->query($sql);
 
                                                     if ($result === false) {
@@ -318,6 +320,7 @@ $conn->close();
                                 </div>
                             </div>
                         </div>
+
 
 
                     </div>
