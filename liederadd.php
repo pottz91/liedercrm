@@ -282,6 +282,71 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
 
 
                         <h2>Liederliste</h2>
+                        <div class="dropdown pt-2 pb-2">
+                            <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="columnDropdown"
+                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Spalten auswählen
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="columnDropdown">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="checkboxName" data-column="0"
+                                        checked>
+                                    <label class="form-check-label" for="checkboxName">
+                                        Name
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="checkboxAutor" data-column="1"
+                                        checked>
+                                    <label class="form-check-label" for="checkboxAutor">
+                                        Autor
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="checkboxTonart" data-column="2"
+                                        checked>
+                                    <label class="form-check-label" for="checkboxTonart">
+                                        Tonart
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="checkboxDatei" data-column="3"
+                                        checked>
+                                    <label class="form-check-label" for="checkboxDatei">
+                                        Datei
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="checkboxBenutzername"
+                                        data-column="4" checked>
+                                    <label class="form-check-label" for="checkboxBenutzername">
+                                        Benutzername
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="checkboxAktionen"
+                                        data-column="5" checked>
+                                    <label class="form-check-label" for="checkboxAktionen">
+                                        Aktionen
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="checkboxDatum" data-column="6"
+                                        checked>
+                                    <label class="form-check-label" for="checkboxDatum">
+                                        Datum
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="checkboxGesamtAbspielungen"
+                                        data-column="7" checked>
+                                    <label class="form-check-label" for="checkboxGesamtAbspielungen">
+                                        Gesamt Abspielungen
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
                         <table id="liederTable" class="table  table-responsive-sm table-striped">
                             <thead>
                                 <tr>
@@ -326,10 +391,7 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
                     <td>" . $row["benutzername"] . "</td>
                     <td>
                         <button type='button' class='btn btn-sm btn-warning' data-bs-toggle='modal' data-bs-target='#editModal' data-id='" . $row["id"] . "' data-name='" . $row["name"] . "' data-autor='" . $row["autor"] . "' data-ton='" . $row["ton"] . "' data-pdf='" . $row["pdf_attachment"] . "'>Bearbeiten</button>
-                        <form method='post' action='liederadd.php' onsubmit='return confirm(\"Möchtest du dieses Lied wirklich löschen?\")'>
-                            <input type='hidden' name='lied_id' value='" . $row["id"] . "'>
-                            <button type='submit' style='font-size:12px' class='btn btn-sm btn-danger'  >Löschen</button>
-                        </form>
+                      
                     </td>
                     <td>" . $row["datum"] . "</td>
                     <td>" . $row["gesamt_abspielungen"] . "</td>
@@ -383,17 +445,53 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
                                             </div>
                                             <input type="hidden" id="editId" name="editId">
                                             <input type="hidden" name="action" value="edit">
-                                            <button type="submit" class="btn btn-primary">Lied
-                                                aktualisieren</button>
+                                            <button type="submit" class="btn btn-primary">Lied aktualisieren</button>
+                                        </form>
+                                        <form id="deleteForm" method="post" action="liederadd.php"
+                                            onsubmit='return confirm("Möchtest du dieses Lied wirklich löschen?")'>
+                                            <input type="hidden" name="lied_id" id="deleteLiedId">
+                                            <input type="hidden" name="action" value="delete">
+                                            <button type="submit" style="font-size:12px"
+                                                class="btn btn-danger">Löschen</button>
                                         </form>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
         </div>
+
+
+        <script>
+            // JavaScript-Code, um die Lied-ID im Modal zu setzen und die Seite neu zu laden
+            $('#editModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget);
+                var liedId = button.data('id');
+                $('#deleteLiedId').val(liedId);
+            });
+
+            // JavaScript-Code, um die Seite nach dem Löschen neu zu laden
+            $('#deleteForm').submit(function () {
+                // Fügen Sie hier Code hinzu, um die Lied-ID zu löschen und die Seite neu zu laden
+                location.reload();
+            });
+        </script>
+
+
+        <script>
+            $(document).ready(function () {
+                var table = $('#liederTable').DataTable();
+
+                $('.dropdown-menu input[type="checkbox"]').on('change', function () {
+                    var column = table.column($(this).attr('data-column'));
+                    column.visible(!column.visible());
+                });
+            });
+        </script>
+
 
         <script>
             // Modal öffnen und Liedinformationen setzen
