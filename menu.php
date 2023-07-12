@@ -1,10 +1,10 @@
 <!-- Sidebar -->
-<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion toggled" id="accordionSidebar">
+<ul class="navbar-nav sidebar sidebar-dark accordion toggled" style="background-color: #171c45" id="accordionSidebar">
 
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/seite2.php">
-        <div class="sidebar-brand-icon rotate-n-15">
-            <i class="fas fa-music"></i>
+        <div class="sidebar-brand-icon">
+            <img class="img-profile"  width="105px" src="./img/logo.jpg">
         </div>
         <div class="sidebar-brand-text mx-3">LiederCRM <sup>2</sup></div>
     </a>
@@ -52,7 +52,7 @@
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">
 
-    <nav class="bg-primary mobile-nav">
+    <nav  style="background-color: #171c45" class=" mobile-nav">
         <a href="seite2.php" class="bloc-icon">
             <i class="fas fa-home"></i>
             <span class="menunavcolor">Dashboard</span>
