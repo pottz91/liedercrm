@@ -75,7 +75,6 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
 
             $sql = "INSERT INTO lieder (name, autor, ton, pdf_attachment, hinzugefuegt_am, benutzer_id) VALUES ('$name', '$autor', '$ton', '$pdf_attachment', '$hinzugefuegt_am', '$benutzer_id')";
 
-
             if ($conn->query($sql) === TRUE) {
                 $id = $conn->insert_id; // Abrufen der ID des gerade hinzugefügten Liedes
 
@@ -89,13 +88,11 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
                                           ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
 
                     $conn->query($abspielungenQuery);
-                    ;
                 } else {
                     echo "Fehler beim Abrufen der ID des hinzugefügten Liedes.";
                 }
-            } else {
-                echo "Fehler: " . $sql . "<br>" . $conn->error;
             }
+
 
 
         }
@@ -167,6 +164,21 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
             echo "Fehler: " . $deleteAbspielungenSQL . "<br>" . $conn->error;
         }
     }
+
+    if (isset($_POST["lied"]) && isset($_POST["datum"])) {
+        // Code zum Einfügen des Liedes in die lieder_datum-Tabelle
+
+        // Abrufen der Lied-ID
+        $liedId = $_POST["lied"];
+
+        // Aktualisieren der Abspielungen in der Tabelle "abspielungen"
+        $abspielungenQuery = "INSERT INTO abspielungen (lieder_id, gesamt_abspielungen)
+                              VALUES ('$liedId', 1)
+                              ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
+
+        $conn->query($abspielungenQuery);
+    }
+
 }
 ?>
 
@@ -408,7 +420,7 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
                 document.getElementById('editPdfAttachmentExisting').value = pdf;
                 document.getElementById('editHinzugefuegt_am').value = datum;
 
-            });
+    });
         </script>
     </div>
 </div>
