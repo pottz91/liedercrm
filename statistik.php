@@ -134,7 +134,7 @@ $liedVorschlaege = getLiedVorschlaege(30);
                 }
                 ?>
 
-                <div id="chart"></div>
+                <div class="card card-body mb-4" id="chart"></div>
 
                 <div class="row">
                     <div class="col">
