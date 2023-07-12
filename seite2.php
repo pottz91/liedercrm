@@ -298,9 +298,11 @@ $conn->close();
                                                 <ul class="list-unstyled">
                                                     <?php
                                                     // SQL-Abfrage ausführen, um die Gesamtzahl der Abspielungen der Lieder zu erhalten
-                                                    $sql = "SELECT lieder.name, COALESCE(abspielungen.gesamt_abspielungen, 0) AS gesamt_abspielungen
+                                                    $sql = "SELECT lieder.name, SUM(abspielungen.gesamt_abspielungen) AS gesamt_abspielungen
                                     FROM lieder
-                                    LEFT JOIN abspielungen ON lieder.id = abspielungen.lieder_id";
+                                    LEFT JOIN abspielungen ON lieder.id = abspielungen.lieder_id
+                                    GROUP BY lieder.name
+                                    ORDER BY gesamt_abspielungen DESC";
                                                     $result = $conn->query($sql);
 
                                                     if ($result === false) {
@@ -320,6 +322,7 @@ $conn->close();
                                 </div>
                             </div>
                         </div>
+
 
 
 
