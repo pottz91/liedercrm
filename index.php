@@ -61,6 +61,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         rel="stylesheet" />
     <link href="https://cdn.datatables.net/v/bs5/dt-1.13.4/datatables.min.css" rel="stylesheet" />
     <script src="https://cdn.datatables.net/v/bs5/dt-1.13.4/datatables.min.js"></script>
+    <script src="service-worker.js"></script>
+
 </head>
 
 <body style="background-color: #171c45;">
