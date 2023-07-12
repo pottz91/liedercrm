@@ -196,7 +196,7 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
         <!-- Main Content -->
         <div id="content ">
             <!-- Begin Page Content -->
-            <div class="container-fluid p-4">
+            <div class="container-fluid pb-5  p-4">
                 <div class="row">
                     <div class="p-2 col-md-3 col-lg-3 col-xl-3 card card-body">
                         <h1>Lieder hinzufügen</h1>
