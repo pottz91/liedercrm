@@ -4,7 +4,7 @@
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/seite2.php">
         <div class="sidebar-brand-icon">
-            <img class="img-profile"  width="105px" src="./img/logo.jpg">
+            <img class="img-profile" width="105px" src="./img/logo.jpg">
         </div>
         <div class="sidebar-brand-text mx-3">LiederCRM <sup>2</sup></div>
     </a>
@@ -29,9 +29,9 @@
     </div>
 
     <li class="nav-item">
-        <a class="nav-link" href="lieder.php" aria-expanded="true">
-            <i class="fas fa-fw fa-music"></i>
-            <span class="menu-font">Lieder</span>
+        <a class="nav-link" href="statistik.php" aria-expanded="true">
+            <i class="fas fa-fw fa-chart-bar"></i>
+            <span class="menu-font">Statistik</span>
         </a>
     </li>
 
@@ -52,14 +52,14 @@
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">
 
-    <nav  style="background-color: #171c45" class=" mobile-nav">
+    <nav style="background-color: #171c45" class=" mobile-nav">
         <a href="seite2.php" class="bloc-icon">
             <i class="fas fa-home"></i>
             <span class="menunavcolor">Dashboard</span>
         </a>
-        <a href="lieder.php" class="bloc-icon">
-            <i class="fas fa-music"></i>
-            <span class="menunavcolor">Lieder</span>
+        <a href="statistik.php" class="bloc-icon">
+            <i class="fas fa-chart-bar"></i>
+            <span class="menunavcolor">Statistik</span>
         </a>
         <a href="liederadd.php" class="bloc-icon">
             <i class="fas fa-edit"></i>
