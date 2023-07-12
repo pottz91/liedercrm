@@ -1,12 +1,39 @@
 <?php
 include 'datenbank.php';
 include 'auth.php';
+
+// Funktion, um Liedvorschläge zu erhalten
+function getLiedVorschlaege($tage)
+{
+    global $conn; // Zugriff auf die Datenbankverbindung
+
+    // SQL-Abfrage, um Lieder zu erhalten, die seit $tage Tagen nicht gespielt wurden
+    $sql = "SELECT name FROM lieder 
+            LEFT JOIN lieder_datum ON lieder.id = lieder_datum.lied_id 
+            WHERE lieder_datum.datum <= DATE_SUB(CURDATE(), INTERVAL $tage DAY) 
+            GROUP BY lieder.id";
+
+    $result = $conn->query($sql);
+
+    if ($result === false) {
+        die("Datenbankabfrage fehlgeschlagen: " . $conn->error);
+    }
+
+    $liedVorschlaege = array();
+    while ($row = $result->fetch_assoc()) {
+        $liedVorschlaege[] = $row['name'];
+    }
+
+    return $liedVorschlaege;
+}
+
+// Aufruf der Funktion für Liedvorschläge, die nicht zwischen 30+ Tagen gespielt wurden
+$liedVorschlaege = getLiedVorschlaege(30);
+
 ?>
 
 <!DOCTYPE html>
 <html lang="de">
-
-
 
 <body>
     <div id="wrapper">
@@ -109,6 +136,18 @@ include 'auth.php';
 
                 <div id="chart"></div>
 
+                <div class="row">
+                    <div class="col">
+                        <h3>Diese Lieder könntet ihr wieder spielen:</h3>
+                        <?php
+                        // Ausgabe der Liedvorschläge in Form von Cards
+                        foreach ($liedVorschlaege as $lied) {
+                            echo "<div class='card card-body pb-3 mb-1'>$lied</div>";
+                        }
+                        ?>
+                    </div>
+                </div>
+
                 <script>
                     document.addEventListener("DOMContentLoaded", function () {
                         const options = {
@@ -129,7 +168,6 @@ include 'auth.php';
                         chart.render();
                     });
                 </script>
-
             </div>
         </div>
     </div>

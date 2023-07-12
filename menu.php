@@ -4,7 +4,7 @@
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/seite2.php">
         <div class="sidebar-brand-icon">
-            <img class="img-profile" width="105px" src="./img/logo.jpg">
+            <img class="img-profile p-1" width="105px" src="./img/logo.jpg">
         </div>
         <div class="sidebar-brand-text mx-3">LiederCRM <sup>2</sup></div>
     </a>
