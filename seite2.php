@@ -95,34 +95,16 @@ $conn->close();
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                                 Letzte angelegte Lieder</div>
-                                            <!-- Card Header - Dropdown -->
-                                            <!--<div
-                                        class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                        <h6 class="m-0 font-weight-bold text-primary">Letzte angelegte Lieder</h6>
-                                        <div class="dropdown no-arrow">
-                                            <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                            </a>-->
+
                                         </div>
                                     </div>
                                 </div>
-
-                                <!--<div class="scrollable-list">
-                                    <style>
-                                        .scrollable-list {
-                                            max-height: 400px;
-                                            overflow-y: auto;
-                                        }
-                                    </style>
-                                </div>-->
-                                <!-- Card Body -->
 
                                 <?php
                                 include 'datenbank.php';
 
                                 // SQL-Abfrage ausführen, um die Liederdaten zu erhalten
-                                $sql = "SELECT name, autor, hinzugefuegt_am FROM lieder ORDER BY hinzugefuegt_am DESC";
+                                $sql = "SELECT name, autor, DATE_FORMAT(hinzugefuegt_am, '%d.%m.%Y') AS hinzugefuegt_am_formatted FROM lieder ORDER BY hinzugefuegt_am DESC";
                                 $result = $conn->query($sql);
 
                                 // Überprüfen, ob die Abfrage erfolgreich war
@@ -179,19 +161,19 @@ $conn->close();
                                                             $benutzername = getBenutzername($benutzer_id);
 
                                                             echo "<tr>
-                                                            <td>" . $row["name"] . "</td>
-                                                            <td class='optional-column autor-column'>" . $row["autor"] . "</td>
-                                                            <td>" . $row["hinzugefuegt_am"] . "</td>
-                                                            <td class='optional-column benutzer-column'>" . $benutzername . "</td>
-                                                            </tr>
-                                                            <tr>
-                                                            <td colspan='4'><hr class='my-1'></td>
-                                                            </tr>";
+                                            <td>" . $row["name"] . "</td>
+                                            <td class='optional-column autor-column'>" . $row["autor"] . "</td>
+                                            <td>" . $row["hinzugefuegt_am_formatted"] . "</td>
+                                            <td class='optional-column benutzer-column'>" . $benutzername . "</td>
+                                          </tr>
+                                          <tr>
+                                            <td colspan='4'><hr class='my-1'></td>
+                                          </tr>";
                                                         }
                                                     } else {
                                                         echo "<tr>
-                                                            <td colspan='4'>Keine Daten vorhanden.</td>
-                                                            </tr>";
+                                        <td colspan='4'>Keine Daten vorhanden.</td>
+                                      </tr>";
                                                     }
                                                     ?>
 
@@ -200,6 +182,7 @@ $conn->close();
                                         </div>
                                     </div>
                                 </div>
+
 
                                 <script>
                                     function toggleColumnVisibility(selectId, columnClass) {
