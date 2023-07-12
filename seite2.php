@@ -1,8 +1,9 @@
 <?php
-include 'header.php';
 include 'datenbank.php';
-// include 'auth.php';
+include 'auth.php';
+session_start();
 ?>
+
 
 
 <?php
