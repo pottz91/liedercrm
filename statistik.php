@@ -74,7 +74,7 @@ $liedVorschlaege = getLiedVorschlaege(30);
                         ?>
                     </select>
 
-                    <button type="submit">Filtern</button>
+                    <button class="btn btn-primary btn-sm" type="submit">Filtern</button>
                 </form>
 
                 <?php
