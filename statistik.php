@@ -6,6 +6,8 @@ include 'auth.php';
 <!DOCTYPE html>
 <html lang="de">
 
+
+
 <body>
     <div id="wrapper">
         <?php include 'menu.php'; ?>
@@ -23,19 +25,46 @@ include 'auth.php';
                         <option value="30tage" <?php echo isset($_GET['zeitraum']) && $_GET['zeitraum'] == '30tage' ? 'selected' : ''; ?>>Letzte 30 Tage</option>
                         <option value="60tage" <?php echo isset($_GET['zeitraum']) && $_GET['zeitraum'] == '60tage' ? 'selected' : ''; ?>>Letzte 60 Tage</option>
                     </select>
+
+                    <label for="liedname">Liedname:</label>
+                    <select name="liedname" id="liedname">
+                        <option value="">Alle</option>
+                        <?php
+                        // SQL-Abfrage, um die verfügbaren Liednamen zu erhalten
+                        $sql = "SELECT DISTINCT name FROM lieder";
+                        $result = $conn->query($sql);
+
+                        // Überprüfen, ob die Abfrage erfolgreich war
+                        if ($result === false) {
+                            die("Datenbankabfrage fehlgeschlagen: " . $conn->error);
+                        }
+
+                        // Liednamen in das Select-Feld einfügen
+                        while ($row = $result->fetch_assoc()) {
+                            $selected = isset($_GET['liedname']) && $_GET['liedname'] == $row['name'] ? 'selected' : '';
+                            echo "<option value='" . $row['name'] . "' $selected>" . $row['name'] . "</option>";
+                        }
+                        ?>
+                    </select>
+
+                    <button type="submit">Filtern</button>
                 </form>
 
                 <?php
                 // Filter für den Zeitraum
                 $zeitraum = isset($_GET['zeitraum']) ? $_GET['zeitraum'] : 'alle';
 
-                // SQL-Abfrage basierend auf dem gewählten Zeitraum
+                // Filter für den Liednamen
+                $liedname = isset($_GET['liedname']) ? $_GET['liedname'] : '';
+
+                // SQL-Abfrage basierend auf dem gewählten Zeitraum und Liednamen
                 $sql = "";
                 if ($zeitraum == '14tage') {
                     $sql = "SELECT lieder.name, COUNT(lieder_datum.id) AS abspielungen 
                             FROM lieder 
                             LEFT JOIN lieder_datum ON lieder.id = lieder_datum.lied_id 
                             WHERE lieder_datum.datum >= DATE_SUB(CURDATE(), INTERVAL 14 DAY) 
+                            AND (lieder.name LIKE '%$liedname%' OR '$liedname' = '')
                             GROUP BY lieder.id 
                             ORDER BY abspielungen DESC";
                 } elseif ($zeitraum == '30tage') {
@@ -43,6 +72,7 @@ include 'auth.php';
                             FROM lieder 
                             LEFT JOIN lieder_datum ON lieder.id = lieder_datum.lied_id 
                             WHERE lieder_datum.datum >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) 
+                            AND (lieder.name LIKE '%$liedname%' OR '$liedname' = '')
                             GROUP BY lieder.id 
                             ORDER BY abspielungen DESC";
                 } elseif ($zeitraum == '60tage') {
@@ -50,50 +80,41 @@ include 'auth.php';
                             FROM lieder 
                             LEFT JOIN lieder_datum ON lieder.id = lieder_datum.lied_id 
                             WHERE lieder_datum.datum >= DATE_SUB(CURDATE(), INTERVAL 60 DAY) 
+                            AND (lieder.name LIKE '%$liedname%' OR '$liedname' = '')
                             GROUP BY lieder.id 
                             ORDER BY abspielungen DESC";
                 } else {
                     $sql = "SELECT lieder.name, COUNT(lieder_datum.id) AS abspielungen 
                             FROM lieder 
                             LEFT JOIN lieder_datum ON lieder.id = lieder_datum.lied_id 
+                            WHERE lieder.name LIKE '%$liedname%' OR '$liedname' = ''
                             GROUP BY lieder.id 
                             ORDER BY abspielungen DESC";
                 }
 
-                // SQL-Abfrage ausführen
                 $result = $conn->query($sql);
 
-                // Überprüfen, ob die Abfrage erfolgreich war
                 if ($result === false) {
                     die("Datenbankabfrage fehlgeschlagen: " . $conn->error);
                 }
 
-                // Chart-Daten erstellen
-                $chartData = [];
+                $chartData = array();
                 while ($row = $result->fetch_assoc()) {
-                    $chartData[] = [
+                    $chartData[] = array(
                         "x" => $row["name"],
                         "y" => $row["abspielungen"]
-                    ];
+                    );
                 }
-
-                // Datenbankverbindung schließen
-                $conn->close();
                 ?>
 
-                <!-- ApexCharts-Diagramm -->
                 <div id="chart"></div>
 
                 <script>
-                    // ApexCharts-Code
                     document.addEventListener("DOMContentLoaded", function () {
                         const options = {
                             chart: {
                                 type: 'bar',
-                                height: 350,
-                                toolbar: {
-                                    show: false
-                                }
+                                height: 350
                             },
                             series: [{
                                 name: 'Abspielungen',
