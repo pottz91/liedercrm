@@ -1,6 +1,7 @@
 <?php
-
 include 'datenbank.php';
+include 'log.php'; // Inkludieren der log.php-Datei
+
 session_start();
 
 // Überprüfen, ob das Anmeldeformular abgeschickt wurde
@@ -8,26 +9,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST['user'];
     $password = $_POST['passwort'];
     // SQL-Statement zum Abrufen des Benutzers aus der Datenbank
-    $sql = "SELECT passwort FROM benutzer WHERE benutzername = '$username'";
+    $sql = "SELECT passwort, id FROM benutzer WHERE benutzername = '$username'";
     $result = $conn->query($sql);
 
     if ($result->num_rows == 1) {
         $row = $result->fetch_assoc();
         $hashedPassword = $row['passwort'];
+        $benutzerID = $row['id'];
 
         // Überprüfen des Passworts
         if (password_verify($password, $hashedPassword)) {
             // Anmeldeinformationen sind korrekt, Sitzung erstellen
             $_SESSION['loggedin'] = true;
             $_SESSION['benutzername'] = $username;
-            // Leite zur Startseite weiter
+
+            // Leite zur Seite2 weiter
             header('Location: seite2.php');
             exit;
+        } else {
+            // Anmeldeinformationen sind ungültig, Fehlermeldung anzeigen
+            echo '<div class="alert alert-danger" role="alert">Ungültige Anmeldeinformationen.</div>';
         }
+    } else {
+        // Anmeldeinformationen sind ungültig, Fehlermeldung anzeigen
+        echo '<div class="alert alert-danger" role="alert">Ungültige Anmeldeinformationen.</div>';
     }
-
-    // Anmeldeinformationen sind ungültig, Fehlermeldung anzeigen
-    echo "Ungültige Anmeldeinformationen.";
 }
 ?>
 <html>

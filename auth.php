@@ -15,6 +15,7 @@ if (!isset($_SESSION['loggedin'])) {
 ?>
 
 <head>
+
     <link rel="stylesheet" href="./ressource/css/style.css">
     <link rel="stylesheet" href="./ressource/css/sb-admin-2.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css"
@@ -39,7 +40,6 @@ if (!isset($_SESSION['loggedin'])) {
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=nunito:200,300,400,500,600,700,800,900|nunito-sans:400"
         rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/v/bs5/dt-1.13.4/datatables.min.css" rel="stylesheet" />
     <script src="https://cdn.datatables.net/v/bs5/dt-1.13.4/datatables.min.js"></script>
 

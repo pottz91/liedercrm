@@ -2,21 +2,21 @@
 include 'auth.php';
 include 'datenbank.php';
 
-// Überprüfen, ob das Formular zum Hinzufügen oder Bearbeiten abgeschickt wurde
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST["action"])) {
+// Überprüfen, ob das Formular abgesendet wurde
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['action'])) {
         // Hinzufügen eines neuen Lieds
-        if ($_POST["action"] == "add") {
-            $name = $_POST["name"];
-            $tags = $_POST["tags"];
-            $autor = $_POST["autor"];
-            $ton = $_POST["ton"];
+        if ($_POST['action'] === 'add') {
+            $name = $_POST['name'];
+            $tags = $_POST['tags'];
+            $autor = $_POST['autor'];
+            $ton = $_POST['ton'];
             $pdf_attachment = '';
 
             // Überprüfen, ob ein PDF-Anhang hochgeladen wurde
             if (isset($_FILES['pdf_attachment']) && $_FILES['pdf_attachment']['error'] === UPLOAD_ERR_OK) {
                 $target_dir = "pdf/";
-                $target_file = $target_dir . basename($_FILES["pdf_attachment"]["name"]);
+                $target_file = $target_dir . basename($_FILES['pdf_attachment']['name']);
                 $uploadOk = 1;
                 $fileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
@@ -28,22 +28,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $uploadOk = 0;
                 }
 
-                // Datum aus dem Formular erfassen
-                $datum = $_POST["hinzugefuegt_am"];
-                // Das erfasste Datum in das richtige Format konvertieren (von d.m.Y zu Y-m-d)
-                $hinzugefuegt_am = date("Y-m-d", strtotime($datum));
-
-                // Überprüfen, ob $uploadOk aufgrund eines Fehlers auf 0 gesetzt ist
                 if ($uploadOk == 0) {
                     echo "Die Datei wurde nicht hochgeladen.";
                 } else {
-                    if (move_uploaded_file($_FILES["pdf_attachment"]["tmp_name"], $target_file)) {
-                        echo "Die Datei " . htmlspecialchars(basename($_FILES["pdf_attachment"]["name"])) . " wurde erfolgreich hochgeladen.";
-                        $pdf_attachment = basename($_FILES["pdf_attachment"]["name"]);
+                    if (move_uploaded_file($_FILES['pdf_attachment']['tmp_name'], $target_file)) {
+                        echo "Die Datei " . htmlspecialchars(basename($_FILES['pdf_attachment']['name'])) . " wurde erfolgreich hochgeladen.";
+                        $pdf_attachment = basename($_FILES['pdf_attachment']['name']);
                     } else {
                         echo "Es gab einen Fehler beim Hochladen Ihrer Datei.";
                     }
                 }
+            }
+
+            // Überprüfen, ob ein PDF mit dem Liednamen bereits vorhanden ist
+            $existingPdfQuery = "SELECT pdf_attachment FROM lieder WHERE name = '$name' AND pdf_attachment != ''";
+            $existingPdfResult = $conn->query($existingPdfQuery);
+
+            if ($existingPdfResult->num_rows > 0) {
+                $existingPdfRow = $existingPdfResult->fetch_assoc();
+                $existingPdf = $existingPdfRow['pdf_attachment'];
+
+                // Wenn ein PDF gefunden wurde, weise es automatisch zu
+                $pdf_attachment = $existingPdf;
             }
 
             if (isset($_SESSION['benutzername'])) {
@@ -57,32 +63,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $benutzerRow = $benutzerResult->fetch_assoc();
                     $benutzer_id = $benutzerRow['id'];
                 } else {
-                    // handle the case when the user does not exist in the database
                     echo "Benutzer existiert nicht.";
                     exit();
                 }
             } else {
-                // handle the case when 'benutzername' does not exist in the session
                 echo "Benutzer ist nicht angemeldet.";
                 exit();
             }
 
             // Abspielung des Liedes zählen und in die Tabelle "abspielungen" einfügen
             $abspielungenQuery = "INSERT INTO abspielungen (lieder_id, gesamt_abspielungen)
-VALUES ('$id', 1)
-ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
+                                  VALUES ('$id', 1)
+                                  ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
 
             $conn->query($abspielungenQuery);
 
-
-
             $sql = "INSERT INTO lieder (name, autor, ton, pdf_attachment, hinzugefuegt_am, benutzer_id, tags)
-            VALUES ('$name', '$autor', '$ton', '$pdf_attachment', '$hinzugefuegt_am', '$benutzer_id', '$tags')";
+                    VALUES ('$name', '$autor', '$ton', '$pdf_attachment', CURRENT_DATE(), '$benutzer_id', '$tags')";
 
             if ($conn->query($sql) === TRUE) {
-                $id = $conn->insert_id; // Abrufen der ID des gerade hinzugefügten Liedes
+                $id = $conn->insert_id;
 
-                // Überprüfen, ob die ID erfolgreich abgerufen wurde
                 if ($id) {
                     echo "<p>Lied wurde erfolgreich hinzugefügt.</p>";
 
@@ -96,23 +97,20 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
                     echo "Fehler beim Abrufen der ID des hinzugefügten Liedes.";
                 }
             }
-
-
-
         }
         // Bearbeiten eines vorhandenen Lieds
-        elseif ($_POST["action"] == "edit") {
-            $id = $_POST["editId"];
-            $name = $_POST["editName"];
-            $autor = $_POST["editAutor"];
-            $ton = $_POST["editTon"];
-            $tags = $_POST["tags"];
-            $datum = $_POST["editHinzugefuegt_am"];
+        elseif ($_POST['action'] === 'edit') {
+            $id = $_POST['editId'];
+            $name = $_POST['editName'];
+            $autor = $_POST['editAutor'];
+            $ton = $_POST['editTon'];
+            $tags = $_POST['tags'];
+            $datum = $_POST['editHinzugefuegt_am'];
 
             // Überprüfen, ob ein PDF-Anhang hochgeladen wurde
             if (isset($_FILES['editPdfAttachment']) && $_FILES['editPdfAttachment']['error'] === UPLOAD_ERR_OK) {
                 $target_dir = "pdf/";
-                $target_file = $target_dir . basename($_FILES["editPdfAttachment"]["name"]);
+                $target_file = $target_dir . basename($_FILES['editPdfAttachment']['name']);
                 $uploadOk = 1;
                 $fileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
 
@@ -124,19 +122,18 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
                     $uploadOk = 0;
                 }
 
-                // Überprüfen, ob $uploadOk aufgrund eines Fehlers auf 0 gesetzt ist
                 if ($uploadOk == 0) {
                     echo "Die Datei wurde nicht hochgeladen.";
                 } else {
-                    if (move_uploaded_file($_FILES["editPdfAttachment"]["tmp_name"], $target_file)) {
-                        echo "Die Datei " . htmlspecialchars(basename($_FILES["editPdfAttachment"]["name"])) . " wurde erfolgreich hochgeladen.";
-                        $pdf_attachment = basename($_FILES["editPdfAttachment"]["name"]);
+                    if (move_uploaded_file($_FILES['editPdfAttachment']['tmp_name'], $target_file)) {
+                        echo "Die Datei " . htmlspecialchars(basename($_FILES['editPdfAttachment']['name'])) . " wurde erfolgreich hochgeladen.";
+                        $pdf_attachment = basename($_FILES['editPdfAttachment']['name']);
                     } else {
                         echo "Es gab einen Fehler beim Hochladen Ihrer Datei.";
                     }
                 }
             } else {
-                $pdf_attachment = $_POST["editPdfAttachmentExisting"];
+                $pdf_attachment = $_POST['editPdfAttachmentExisting'];
             }
 
             // SQL-Statement zum Aktualisieren des Lieds in der Datenbank
@@ -149,13 +146,12 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
             }
         }
     }
-    if (isset($_POST["lied_id"])) {
-        $liedId = $_POST["lied_id"];
+    if (isset($_POST['lied_id'])) {
+        $liedId = $_POST['lied_id'];
 
         // SQL-Statement zum Löschen des Eintrags in der Tabelle "abspielungen"
         $deleteAbspielungenSQL = "DELETE FROM abspielungen WHERE lieder_id = $liedId";
 
-        // Führe das SQL-Statement aus, um den Eintrag zu löschen
         if ($conn->query($deleteAbspielungenSQL) === TRUE) {
             // Der Eintrag wurde erfolgreich gelöscht, jetzt kannst du den Datensatz in der Tabelle "lieder" löschen
             $deleteLiedSQL = "DELETE FROM lieder WHERE id = $liedId";
@@ -170,18 +166,25 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
         }
     }
 
-    if (isset($_POST["lied"]) && isset($_POST["datum"])) {
+    if (isset($_POST['lied']) && isset($_POST['datum'])) {
         // Code zum Einfügen des Liedes in die lieder_datum-Tabelle
 
         // Abrufen der Lied-ID
-        $liedId = $_POST["lied"];
+        $lied = $_POST['lied'];
+        $datum = $_POST['datum'];
 
-        // Aktualisieren der Abspielungen in der Tabelle "abspielungen"
-        $abspielungenQuery = "INSERT INTO abspielungen (lieder_id, gesamt_abspielungen)
-                              VALUES ('$liedId', 1)
-                              ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
+        // SQL-Query zum Abrufen der Lied-ID basierend auf dem Namen
+        $liedIdQuery = "SELECT id FROM lieder WHERE name = '$lied' LIMIT 1";
+        $liedIdResult = $conn->query($liedIdQuery);
 
-        $conn->query($abspielungenQuery);
+        if ($liedIdResult->num_rows > 0) {
+            $liedIdRow = $liedIdResult->fetch_assoc();
+            $liedId = $liedIdRow['id'];
+
+            // SQL-Query zum Einfügen des Datums in die lieder_datum-Tabelle
+            $liederDatumQuery = "INSERT INTO lieder_datum (lied_id, datum) VALUES ('$liedId', '$datum')";
+            $conn->query($liederDatumQuery);
+        }
     }
 
 }
@@ -197,8 +200,54 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
         <div id="content ">
             <!-- Begin Page Content -->
             <div class="container-fluid pb-5  p-4">
+
                 <div class="row">
+
                     <div class="p-2 col-md-3 col-lg-3 col-xl-3 card card-body">
+                        <h3>Lieder zu einem Datum hinzufügen</h3>
+                        <form method="post" action="">
+                            <div class="mb-3">
+                                <label for="lied" class="form-label">Lied auswählen:</label>
+                                <input class="form-control" type="text" id="lied" name="lied" list="liederList"
+                                    required>
+                                <datalist id="liederList">
+                                    <?php
+                                    // Lieder aus der Datenbank abrufen und Duplikate entfernen
+                                    $sql = "SELECT DISTINCT name FROM lieder";
+                                    $result = $conn->query($sql);
+
+                                    if ($result->num_rows > 0) {
+                                        while ($row = $result->fetch_assoc()) {
+                                            echo "<option value='" . $row["name"] . "'>";
+                                        }
+                                    }
+                                    ?>
+                                </datalist>
+                            </div>
+                            <div class="mb-3">
+                                <label for="datum" class="form-label">Datum:</label>
+                                <input type="date" class="form-control" id="datum" name="datum" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary" onclick="location.reload()">Zu Datum
+                                hinzufügen</button>
+                        </form>
+
+
+
+                        <?php
+                        // Lieder aus der Datenbank abrufen
+                        $sql = "SELECT id, name FROM lieder";
+                        $result = $conn->query($sql);
+
+                        if ($result->num_rows > 0) {
+                            echo '<datalist id="liederList">';
+                            while ($row = $result->fetch_assoc()) {
+                                echo "<option value='" . $row["name"] . "'>";
+                            }
+                            echo '</datalist>';
+                        }
+                        ?>
+
                         <h1>Lieder hinzufügen</h1>
                         <form method="post" action="" enctype="multipart/form-data">
                             <div class="mb-3">
@@ -235,30 +284,7 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
 
 
 
-                        <h3>Lieder zu einem Datum hinzufügen</h3>
-                        <form method="post" action="">
-                            <div class="mb-3">
-                                <label for="lied" class="form-label">Lied:</label>
-                                <select class="form-control" id="lied" name="lied" required>
-                                    <?php
-                                    // Lieder aus der Datenbank abrufen
-                                    $sql = "SELECT id, name FROM lieder";
-                                    $result = $conn->query($sql);
 
-                                    if ($result->num_rows > 0) {
-                                        while ($row = $result->fetch_assoc()) {
-                                            echo "<option value='" . $row["id"] . "'>" . $row["name"] . "</option>";
-                                        }
-                                    }
-                                    ?>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="datum" class="form-label">Datum:</label>
-                                <input type="date" class="form-control" id="datum" name="datum" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Zu Datum hinzufügen</button>
-                        </form>
                         <?php
                         if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             if (isset($_POST["lied"]) && isset($_POST["datum"])) {
@@ -364,50 +390,52 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
                             </div>
                         </div>
 
-                        <table id="liederTable" class="table table-responsive-sm table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Autor</th>
-                                    <th>Tonart</th>
-                                    <th>Datei</th>
-                                    <th>Benutzername</th>
-                                    <th>Kategorien</th>
-                                    <th>Aktionen</th>
-                                    <th>Datum</th>
-                                    <th>Gesamt Abspielungen</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                // SQL-Statement zum Abrufen der Lieder aus der Datenbank mit deutschem Datums- und Uhrzeitformat
-                                $sql = "SELECT lieder.id, lieder.name, lieder.autor, lieder.ton, lieder.pdf_attachment, benutzer.benutzername, lieder.tags, COALESCE(DATE_FORMAT(lieder_datum.datum, '%d.%m.%Y'), DATE_FORMAT(lieder.hinzugefuegt_am, '%d.%m.%Y')) AS datum, COALESCE(abspielungen.gesamt_abspielungen, 0) AS gesamt_abspielungen
+                        <div class="container p-0">
+                            <div class="table-responsive">
+                                <table id="liederTable" class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Autor</th>
+                                            <th>Tonart</th>
+                                            <th>Datei</th>
+                                            <th>Benutzername</th>
+                                            <th>Kategorien</th>
+                                            <th>Aktionen</th>
+                                            <th>Datum</th>
+                                            <th>Gesamt Abspielungen</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        // SQL-Statement zum Abrufen der Lieder aus der Datenbank mit deutschem Datums- und Uhrzeitformat
+                                        $sql = "SELECT lieder.id, lieder.name, lieder.autor, lieder.ton, lieder.pdf_attachment, benutzer.benutzername, lieder.tags, COALESCE(DATE_FORMAT(lieder_datum.datum, '%d.%m.%Y'), DATE_FORMAT(lieder.hinzugefuegt_am, '%d.%m.%Y')) AS datum, COALESCE(abspielungen.gesamt_abspielungen, 0) AS gesamt_abspielungen
         FROM lieder
         LEFT JOIN benutzer ON lieder.benutzer_id = benutzer.id
         LEFT JOIN lieder_datum ON lieder.id = lieder_datum.lied_id
         LEFT JOIN (SELECT lieder_id, COUNT(*) AS gesamt_abspielungen FROM abspielungen GROUP BY lieder_id) AS abspielungen ON lieder.id = abspielungen.lieder_id";
 
-                                $result = $conn->query($sql);
+                                        $result = $conn->query($sql);
 
-                                // Überprüfen, ob Zeilen in der Abfrageergebnismenge vorhanden sind
-                                if ($result->num_rows > 0) {
-                                    while ($row = $result->fetch_assoc()) {
-                                        $pdfPath = 'pdf/' . $row["pdf_attachment"];
-                                        $pdfButton = '';
+                                        // Überprüfen, ob Zeilen in der Abfrageergebnismenge vorhanden sind
+                                        if ($result->num_rows > 0) {
+                                            while ($row = $result->fetch_assoc()) {
+                                                $pdfPath = 'pdf/' . $row["pdf_attachment"];
+                                                $pdfButton = '';
 
-                                        // Überprüfen, ob ein PDF-Anhang vorhanden ist
-                                        if (!empty($row["pdf_attachment"])) {
-                                            $pdfButton = "<a href='$pdfPath' target='_blank' class='btn btn-sm btn-primary'>PDF</a>";
-                                        }
+                                                // Überprüfen, ob ein PDF-Anhang vorhanden ist
+                                                if (!empty($row["pdf_attachment"])) {
+                                                    $pdfButton = "<a href='$pdfPath' target='_blank' class='btn btn-sm btn-primary'>PDF</a>";
+                                                }
 
-                                        // Tags als Badges generieren
-                                        $tags = explode(",", $row["tags"]);
-                                        $tagBadges = "";
-                                        foreach ($tags as $tag) {
-                                            $tagBadges .= "<span class='badge bg-secondary'>$tag</span> ";
-                                        }
+                                                // Tags als Badges generieren
+                                                $tags = explode(",", $row["tags"]);
+                                                $tagBadges = "";
+                                                foreach ($tags as $tag) {
+                                                    $tagBadges .= "<span class='badge bg-secondary'>$tag</span> ";
+                                                }
 
-                                        echo "<tr>
+                                                echo "<tr>
                     <td>" . $row["name"] . "</td>
                     <td>" . $row["autor"] . "</td>
                     <td>" . $row["ton"] . "</td>
@@ -420,13 +448,15 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
                     <td>" . $row["datum"] . "</td>
                     <td>" . $row["gesamt_abspielungen"] . "</td>
                 </tr>";
-                                    }
-                                } else {
-                                    echo "<tr><td colspan='8'>Keine Lieder gefunden.</td></tr>";
-                                }
-                                ?>
-                            </tbody>
-                        </table>
+                                            }
+                                        } else {
+                                            echo "<tr><td colspan='8'>Keine Lieder gefunden.</td></tr>";
+                                        }
+                                        ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                         <!-- Modal für die Bearbeitung -->
                         <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel"
                             aria-hidden="true">
@@ -580,6 +610,72 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
 
             });
         </script>
+
+        <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
+        <script>
+            $(function () {
+                // Autocomplete für Lied
+                $("#lied").autocomplete({
+                    source: function (request, response) {
+                        $.ajax({
+                            url: "autocomplete.php",
+                            type: "GET",
+                            dataType: "json",
+                            data: {
+                                search: request.term
+                            },
+                            success: function (data) {
+                                response(data);
+                            }
+                        });
+                    },
+                    minLength: 2,
+                    select: function (event, ui) {
+                        var selectedLied = ui.item.value;
+                        $("#lied").val(selectedLied);
+                        return false; // Prevent default selection behavior
+                    }
+                });
+
+                // Submit-Handler für das Formular
+                $("form").submit(function (event) {
+                    event.preventDefault(); // Prevent form submission
+
+                    // Lied und Datum auslesen
+                    var selectedLied = $("#lied").val();
+                    var selectedDatum = $("#datum").val();
+
+                    // Debug-Ausgabe (kann entfernt werden)
+                    console.log("Ausgewähltes Lied: " + selectedLied);
+                    console.log("Ausgewähltes Datum: " + selectedDatum);
+
+                    // Hier wird der Code zum Speichern der Daten in der Datenbank eingefügt
+                    $.ajax({
+                        url: "save.php", // Pfad zur PHP-Datei für das Speichern der Daten
+                        type: "POST",
+                        data: {
+                            lied: selectedLied,
+                            datum: selectedDatum
+                        },
+                        success: function (response) {
+                            // Erfolgsbehandlung
+                            console.log("Daten erfolgreich gespeichert.");
+                            // Hier kannst du weitere Aktionen ausführen oder eine Bestätigungsmeldung anzeigen
+                        },
+                        error: function (xhr, status, error) {
+                            // Fehlerbehandlung
+                            console.log("Fehler beim Speichern der Daten.");
+                            // Hier kannst du entsprechend reagieren und eine Fehlermeldung anzeigen
+                        }
+                    });
+
+                    // Optional: Formular zurücksetzen
+                    $("#lied").val("");
+                    $("#datum").val("");
+                });
+            });
+        </script>
+
     </div>
 </div>
 <style>

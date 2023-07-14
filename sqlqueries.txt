@@ -5,7 +5,8 @@ CREATE TABLE benutzer (
     passwort VARCHAR(255) NOT NULL
 );
 
-
+ALTER TABLE benutzer
+ADD bild BLOB;
 
 CREATE TABLE lieder (
     id INT NOT NULL AUTO_INCREMENT,
@@ -60,3 +61,13 @@ ON DELETE CASCADE;
 
 
 ALTER TABLE lieder ADD tags VARCHAR(255);
+
+
+
+CREATE TABLE aktivitaetsprotokoll (
+    id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    benutzer_id INT(6) UNSIGNED,
+    aktivitaet VARCHAR(255),
+    zeitpunkt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (benutzer_id) REFERENCES benutzer(id)
+);

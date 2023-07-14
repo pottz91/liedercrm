@@ -90,7 +90,7 @@ $liedVorschlaege = getLiedVorschlaege(30);
                     $sql = "SELECT lieder.name, COUNT(lieder_datum.id) AS abspielungen 
                             FROM lieder 
                             LEFT JOIN lieder_datum ON lieder.id = lieder_datum.lied_id 
-                            WHERE lieder_datum.datum >= DATE_SUB(CURDATE(), INTERVAL 14 DAY) 
+                            WHERE lieder_datum.datum >= DATE_SUB(CURDATE(), INTERVAL 150 DAY) 
                             AND (lieder.name LIKE '%$liedname%' OR '$liedname' = '')
                             GROUP BY lieder.id 
                             ORDER BY abspielungen DESC";
@@ -98,7 +98,7 @@ $liedVorschlaege = getLiedVorschlaege(30);
                     $sql = "SELECT lieder.name, COUNT(lieder_datum.id) AS abspielungen 
                             FROM lieder 
                             LEFT JOIN lieder_datum ON lieder.id = lieder_datum.lied_id 
-                            WHERE lieder_datum.datum >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) 
+                            WHERE lieder_datum.datum >= DATE_SUB(CURDATE(), INTERVAL 365 DAY) 
                             AND (lieder.name LIKE '%$liedname%' OR '$liedname' = '')
                             GROUP BY lieder.id 
                             ORDER BY abspielungen DESC";
@@ -106,7 +106,7 @@ $liedVorschlaege = getLiedVorschlaege(30);
                     $sql = "SELECT lieder.name, COUNT(lieder_datum.id) AS abspielungen 
                             FROM lieder 
                             LEFT JOIN lieder_datum ON lieder.id = lieder_datum.lied_id 
-                            WHERE lieder_datum.datum >= DATE_SUB(CURDATE(), INTERVAL 60 DAY) 
+                            WHERE lieder_datum.datum >= DATE_SUB(CURDATE(), INTERVAL 730 DAY) 
                             AND (lieder.name LIKE '%$liedname%' OR '$liedname' = '')
                             GROUP BY lieder.id 
                             ORDER BY abspielungen DESC";

@@ -2,53 +2,126 @@
 include 'datenbank.php';
 include 'auth.php';
 
-// Funktion zum Aktualisieren des Passworts
-function passwortAktualisieren($neuesPasswort)
-{
-    // Stelle sicher, dass der Benutzer eingeloggt ist
-    session_start();
-    if (!isset($_SESSION['benutzername'])) {
-        die("Benutzer ist nicht eingeloggt.");
-    }
+$message = ""; // Variable für die Meldung
 
-    // Aktualisiere das Passwort in der Datenbank
-    $benutzername = $_SESSION['benutzername'];
-    $passwortHash = password_hash($neuesPasswort, PASSWORD_DEFAULT);
-    $sql = "UPDATE benutzer SET passwort = '$passwortHash' WHERE benutzername = '$benutzername'";
+if (isset($_POST['submit'])) {
+    if (!empty($_POST['password'])) {
+        $neuesPasswort = $_POST['password'];
+        $hashPasswort = password_hash($neuesPasswort, PASSWORD_DEFAULT);
 
-    if ($conn->query($sql) === TRUE) {
-        echo "Passwort erfolgreich aktualisiert.";
+        session_start();
+        $benutzername = $_SESSION['benutzername'];
+
+        $sql = "UPDATE benutzer SET passwort = '$hashPasswort' WHERE benutzername = '$benutzername'";
+
+        if ($conn->query($sql) === TRUE) {
+            $message = "Passwort wurde erfolgreich aktualisiert.";
+        } else {
+            $message = "Fehler beim Aktualisieren des Passworts: " . $conn->error;
+        }
     } else {
-        echo "Fehler beim Aktualisieren des Passworts: " . $conn->error;
+        $message = "Bitte geben Sie ein neues Passwort ein.";
     }
 }
 
-// Überprüfe, ob das Formular zum Aktualisieren des Passworts gesendet wurde
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
-    // Überprüfe, ob das neue Passwort ausgefüllt wurde
-    if (isset($_POST['password']) && !empty($_POST['password'])) {
-        $neuesPasswort = $_POST['password'];
+// Rollenabfrage
+session_start();
+$benutzername = $_SESSION['benutzername'];
 
-        // Passwort aktualisieren
-        passwortAktualisieren($neuesPasswort);
+// Überprüfen, ob der aktuelle Benutzer die ID 1 hat
+$sql = "SELECT id FROM benutzer WHERE benutzername = '$benutzername'";
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $benutzerID = $row['id'];
+
+    if ($benutzerID == 1) {
+        // SQL-Abfrage zum Abrufen aller anderen registrierten Mitglieder
+        $sqlAndereMitglieder = "SELECT * FROM benutzer WHERE id <> 1";
+        $resultAndereMitglieder = $conn->query($sqlAndereMitglieder);
+
+        // Array zum Speichern der anderen Mitglieder
+        $andereMitglieder = array();
+
+        // Schleife zum Durchlaufen der Abfrageergebnisse
+        while ($rowAndereMitglieder = $resultAndereMitglieder->fetch_assoc()) {
+            $andereMitglieder[] = $rowAndereMitglieder['benutzername'];
+        }
+    }
+}
+
+// Bearbeiten und Löschen von Benutzern
+if (isset($_POST['edit'])) {
+    $editBenutzerID = $_POST['editBenutzerID'];
+
+    // Code für die Bearbeitung des Benutzers
+    if (isset($_POST['neuesPasswort'])) {
+        $neuesPasswort = $_POST['neuesPasswort'];
+        $hashPasswort = password_hash($neuesPasswort, PASSWORD_DEFAULT);
+        $sqlBearbeiten = "UPDATE benutzer SET passwort = '$hashPasswort' WHERE id = $editBenutzerID";
+
+        if ($conn->query($sqlBearbeiten) === TRUE) {
+            $message = "Passwort des Benutzers mit ID $editBenutzerID erfolgreich bearbeitet.";
+        } else {
+            $message = "Fehler beim Bearbeiten des Passworts des Benutzers: " . $conn->error;
+        }
     } else {
-        echo "Bitte geben Sie ein neues Passwort ein.";
+        $message = "Bitte geben Sie ein neues Passwort ein.";
+    }
+}
+
+if (isset($_POST['delete'])) {
+    $deleteBenutzerID = $_POST['deleteBenutzerID'];
+
+    // Code für das Löschen des Benutzers
+    $sqlLoeschen = "DELETE FROM benutzer WHERE id = $deleteBenutzerID";
+
+    if ($conn->query($sqlLoeschen) === TRUE) {
+        $message = "Benutzer mit ID $deleteBenutzerID erfolgreich gelöscht.";
+    } else {
+        $message = "Fehler beim Löschen des Benutzers: " . $conn->error;
+    }
+}
+
+// Bild-Upload-Funktion
+if (isset($_POST['upload'])) {
+    $benutzername = $_SESSION['benutzername'];
+
+    // Überprüfen, ob eine Datei ausgewählt wurde
+    if (!empty($_FILES['bild']['name'])) {
+        $uploadOrdner = 'uploads/'; // Verzeichnis zum Speichern der hochgeladenen Bilder
+        $dateiName = $_FILES['bild']['name'];
+        $dateiTemp = $_FILES['bild']['tmp_name'];
+        $dateiZiel = $uploadOrdner . $dateiName;
+
+        // Verschieben der hochgeladenen Datei in das Zielverzeichnis
+        if (move_uploaded_file($dateiTemp, $dateiZiel)) {
+            // Bildpfad in die Datenbank speichern
+            $sql = "UPDATE benutzer SET bild = '$dateiZiel' WHERE benutzername = '$benutzername'";
+
+            if ($conn->query($sql) === TRUE) {
+                $message = "Bild erfolgreich hochgeladen.";
+                header("Location: profil.php"); // Seite neu laden
+                exit(); // Beenden Sie das Skript, um die Weiterleitung sicherzustellen
+            } else {
+                $message = "Fehler beim Hochladen des Bildes: " . $conn->error;
+            }
+        } else {
+            $message = "Fehler beim Verschieben der hochgeladenen Datei.";
+        }
+    } else {
+        $message = "Bitte wählen Sie eine Datei aus.";
     }
 }
 ?>
 
 <div id="wrapper">
-    <?php
-    include 'menu.php';
-    ?>
+    <?php include 'menu.php'; ?>
 
-
-    <!-- Content Wrapper -->
     <div id="content-wrapper" class="d-flex flex-column">
-        <?php
-        include 'topbar.php';
-        ?>
-        <!-- Main Content -->
+        <?php include 'topbar.php'; ?>
+
         <div id="content" style="margin-bottom: 200px">
             <div class="container">
                 <div class="row gutters">
@@ -58,45 +131,117 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
                                 <div class="account-settings">
                                     <div class="user-profile">
                                         <h5 class="user-name">
-                                            <?php
-                                            echo "<p>" . $_SESSION['benutzername'] . "</p>";
-                                            ?>
+                                            <?php echo "<p>" . $_SESSION['benutzername'] . "</p>"; ?>
                                         </h5>
-                                        <h6 class="user-email">test</h6>
+
+                                        <?php
+
+                                        $benutzername = $_SESSION['benutzername'];
+
+                                        // Bild des Benutzers aus der Datenbank abrufen
+                                        $sql = "SELECT bild FROM benutzer WHERE benutzername = '$benutzername'";
+                                        $result = $conn->query($sql);
+
+                                        if ($result->num_rows > 0) {
+                                            $row = $result->fetch_assoc();
+                                            $bild = $row['bild'];
+                                            if (!empty($bild)) {
+                                                echo '<img style="border-radius: 5px" src="' . $bild . '" alt="Profilbild" width="200">';
+                                            }
+                                        }
+                                        ?>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                     <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
                         <div class="card h-100">
                             <div class="card-body">
+                                <?php if (!empty($message)): ?>
+                                    <div class="alert alert-<?php echo $message == "Passwort wurde erfolgreich aktualisiert." ? "success" : "danger"; ?>"
+                                        role="alert">
+                                        <?php echo $message; ?>
+                                    </div>
+                                <?php endif; ?>
                                 <div class="row gutters">
                                     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
                                         <h6 class="mb-2 text-primary">Passwort ändern</h6>
                                     </div>
 
                                     <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                                        <div class="form-group">
-                                            <label for="password">Neues Passwort</label>
-                                            <input type="password" class="form-control" id="password"
-                                                placeholder="Neues Passwort eingeben" name="password">
-                                        </div>
+                                        <form method="POST" action="profil.php">
+                                            <div class="form-group">
+                                                <label for="password">Neues Passwort</label>
+                                                <input type="password" class="form-control" id="password"
+                                                    placeholder="Neues Passwort eingeben" name="password">
+                                            </div>
+                                            <div class="text-right">
+                                                <button type="submit" id="submit" name="submit"
+                                                    class="btn btn-primary">Aktualisieren</button>
+                                            </div>
+                                        </form>
+                                        <form method="POST" action="profil.php" enctype="multipart/form-data">
+                                            <div class="form-group">
+                                                <label for="bild">Profilbild hochladen</label>
+                                                <input type="file" class="form-control-file" id="bild" name="bild">
+                                            </div>
+                                            <div class="text-right">
+                                                <button type="submit" id="upload" name="upload"
+                                                    class="btn btn-primary">Hochladen</button>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
-                                <div class="row gutters">
-                                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                                        <div class="text-right">
-                                            <button type="submit" id="submit" name="submit"
-                                                class="btn btn-primary">Aktualisieren</button>
-                                        </div>
-                                    </div>
-                                </div>
+
+                                <hr>
+
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <?php if (isset($benutzerID) && $benutzerID == 1 && !empty($andereMitglieder)): ?>
+                <div class="container">
+                    <div class="card card-body m-0 mt-2  row gutters">
+                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                            <h6 class="mb-2 text-primary">Andere registrierte Mitglieder:</h6>
+                        </div>
+
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                            <ul>
+                                <?php foreach ($andereMitglieder as $mitglied): ?>
+                                    <li>
+                                        <?php echo $mitglied; ?>
+                                        <form method="POST" action="profil.php" style="display:inline-block;">
+                                            <input type="hidden" name="editBenutzerID" value="<?php echo $mitglied; ?>">
+                                            <button type="submit" name="edit" class="btn btn-link">Bearbeiten</button>
+                                        </form>
+                                        <form method="POST" action="profil.php" style="display:inline-block;">
+                                            <input type="hidden" name="deleteBenutzerID" value="<?php echo $mitglied; ?>">
+                                            <button type="submit" name="delete" class="btn btn-link">Löschen</button>
+                                        </form>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
+                    </div>
+                <?php endif; ?>
+            </div>
+            <div id="content" style="margin-bottom: 200px">
+                <!-- Rest des Inhalts hier -->
+                <div class="pt-2 container">
+                    <?php
+                    include 'log.php';
+                    $benutzerID = $_SESSION['benutzerID'] = 1; // Annahme: Die Benutzer-ID wird in der Sitzungsvariable 'benutzerID' gespeichert
+                    if ($benutzerID == 1) {
+                        getAktivitaetsprotokoll();
+                    }
+                    ?>
+                </div>
+
+            </div>
+
         </div>
     </div>
-</div>
