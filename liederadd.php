@@ -221,7 +221,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.1/css/dataTables.bootstrap5.min.css">
 <script type="text/javascript" src="https://cdn.datatables.net/1.11.1/js/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/1.11.1/js/dataTables.bootstrap5.min.js"></script>
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
+<link rel="stylesheet" type="text/css"
+    href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
 
 <div id="wrapper">
     <?php include 'menu.php'; ?>
@@ -237,11 +238,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <div class="p-2 col-md-3 col-lg-3 col-xl-3 card card-body">
 
 
-                                <h3>Lieder zu einem Datum hinzufügen</h3>
+                        <h3>Lieder zu einem Datum hinzufügen</h3>
 
- 
 
-                        <form method="post" action="">
+
+                        <form id="meinFormular" method="post" action="">
                             <div class="mb-3">
                                 <label for="lied" class="form-label">Lied auswählen:</label>
                                 <input class="form-control" type="text" id="lied" name="lied" list="liederList"
@@ -267,7 +268,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <button type="submit" class="btn btn-primary" onclick="location.reload()">Zu Datum
                                 hinzufügen</button>
                         </form>
-               <h1>Lieder hinzufügen</h1>
+                        <h1>Lieder hinzufügen</h1>
                         <form method="post" action="" enctype="multipart/form-data">
                             <div class="mb-3">
                                 <label for="name" class="form-label">Name:</label>
@@ -303,7 +304,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
 
-                    
+
                         <?php
                         if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             if (isset($_POST["lied"]) && isset($_POST["datum"])) {
@@ -339,127 +340,131 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
                         <h2>Liederliste</h2>
-                  <div class="dropdown pt-2 pb-2">
-    <button class="btn btn-secondary dropdown-toggle" type="button" id="columnDropdown"
-        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        Spalten auswählen
-    </button>
-<div class="dropdown-menu" aria-labelledby="columnDropdown">
-    <form method="POST" action="liederadd.php">
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" name="checkboxName" id="checkboxName" data-column="0"
-                checked>
-            <label class="form-check-label" for="checkboxName">
-                Name
-            </label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" name="checkboxAutor" id="checkboxAutor" data-column="1"
-                checked>
-            <label class="form-check-label" for="checkboxAutor">
-                Autor
-            </label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" name="checkboxTonart" id="checkboxTonart" data-column="2"
-                checked>
-            <label class="form-check-label" for="checkboxTonart">
-                Tonart
-            </label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" name="checkboxDatei" id="checkboxDatei" data-column="3"
-                checked>
-            <label class="form-check-label" for="checkboxDatei">
-                Datei
-            </label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" name="checkboxBenutzername" id="checkboxBenutzername"
-                data-column="4" checked>
-            <label class="form-check-label" for="checkboxBenutzername">
-                Benutzername
-            </label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" name="checkboxKategorie" id="checkboxKategorie"
-                data-column="5" checked>
-            <label class="form-check-label" for="checkboxKategorie">
-                Kategorie
-            </label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" name="checkboxAktionen" id="checkboxAktionen"
-                data-column="6" checked>
-            <label class="form-check-label" for="checkboxAktionen">
-                Aktionen
-            </label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" name="checkboxDatum" id="checkboxDatum" data-column="7"
-                checked>
-            <label class="form-check-label" for="checkboxDatum">
-                Datum
-            </label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" name="checkboxGesamtAbspielungen" id="checkboxGesamtAbspielungen"
-                data-column="8" checked>
-            <label class="form-check-label" for="checkboxGesamtAbspielungen">
-                Gesamt Abspielungen
-            </label>
-        </div>
-    </form>
-</div>
-</div>
+                        <div class="dropdown pt-2 pb-2">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="columnDropdown"
+                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Spalten auswählen
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="columnDropdown">
+                                <form method="POST" action="liederadd.php">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="checkboxName"
+                                            id="checkboxName" data-column="0" checked>
+                                        <label class="form-check-label" for="checkboxName">
+                                            Name
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="checkboxAutor"
+                                            id="checkboxAutor" data-column="1" checked>
+                                        <label class="form-check-label" for="checkboxAutor">
+                                            Autor
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="checkboxTonart"
+                                            id="checkboxTonart" data-column="2" checked>
+                                        <label class="form-check-label" for="checkboxTonart">
+                                            Tonart
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="checkboxDatei"
+                                            id="checkboxDatei" data-column="3" checked>
+                                        <label class="form-check-label" for="checkboxDatei">
+                                            Datei
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="checkboxBenutzername"
+                                            id="checkboxBenutzername" data-column="4" checked>
+                                        <label class="form-check-label" for="checkboxBenutzername">
+                                            Benutzername
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="checkboxKategorie"
+                                            id="checkboxKategorie" data-column="5" checked>
+                                        <label class="form-check-label" for="checkboxKategorie">
+                                            Kategorie
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="checkboxAktionen"
+                                            id="checkboxAktionen" data-column="6" checked>
+                                        <label class="form-check-label" for="checkboxAktionen">
+                                            Aktionen
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="checkboxDatum"
+                                            id="checkboxDatum" data-column="7" checked>
+                                        <label class="form-check-label" for="checkboxDatum">
+                                            Datum
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox"
+                                            name="checkboxGesamtAbspielungen" id="checkboxGesamtAbspielungen"
+                                            data-column="8" checked>
+                                        <label class="form-check-label" for="checkboxGesamtAbspielungen">
+                                            Gesamt Abspielungen
+                                        </label>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
 
 
                         <div class="table-responsive">
 
-                        <table id="liederTable" class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Autor</th>
-                                    <th>Tonart</th>
-                                    <th>Datei</th>
-                                    <th>Benutzername</th>
-                                    <th>Kategorien</th>
-                                    <th>Aktionen</th>
-                                    <th>Datum</th>
-                                    <th>Gesamt Abspielungen</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                // SQL-Statement zum Abrufen der Lieder aus der Datenbank mit deutschem Datums- und Uhrzeitformat
-                                $sql = "SELECT lieder.id, lieder.name, lieder.autor, lieder.ton, lieder.pdf_attachment, benutzer.benutzername, lieder.tags, COALESCE(DATE_FORMAT(lieder_datum.datum, '%d.%m.%Y'), DATE_FORMAT(lieder.hinzugefuegt_am, '%d.%m.%Y')) AS datum, COALESCE(abspielungen.gesamt_abspielungen, 0) AS gesamt_abspielungen
+                            <table id="liederTable" class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Autor</th>
+                                        <th>Tonart</th>
+                                        <th>Datei</th>
+                                        <th>Benutzername</th>
+                                        <th>Kategorien</th>
+                                        <th>Aktionen</th>
+                                        <th>Datum</th>
+                                        <th>Gesamt Abspielungen</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    // SQL-Statement zum Abrufen der Lieder aus der Datenbank mit deutschem Datums- und Uhrzeitformat
+                                    $sql = "SELECT lieder.id, lieder.name, lieder.autor, lieder.ton, lieder.pdf_attachment, benutzer.benutzername, lieder.tags, COALESCE(DATE_FORMAT(lieder_datum.datum, '%d.%m.%Y'), DATE_FORMAT(lieder.hinzugefuegt_am, '%d.%m.%Y')) AS datum, COALESCE(abspielungen.gesamt_abspielungen, 0) AS gesamt_abspielungen
         FROM lieder
         LEFT JOIN benutzer ON lieder.benutzer_id = benutzer.id
         LEFT JOIN lieder_datum ON lieder.id = lieder_datum.lied_id
         LEFT JOIN (SELECT lieder_id, COUNT(*) AS gesamt_abspielungen FROM abspielungen GROUP BY lieder_id) AS abspielungen ON lieder.id = abspielungen.lieder_id";
 
-                                $result = $conn->query($sql);
+                                    $result = $conn->query($sql);
 
-                                // Überprüfen, ob Zeilen in der Abfrageergebnismenge vorhanden sind
-                                if ($result->num_rows > 0) {
-                                    while ($row = $result->fetch_assoc()) {
-                                        $pdfPath = 'pdf/' . $row["pdf_attachment"];
-                                        $pdfButton = '';
+                                    // Überprüfen, ob Zeilen in der Abfrageergebnismenge vorhanden sind
+                                    if ($result->num_rows > 0) {
+                                        while ($row = $result->fetch_assoc()) {
+                                            $pdfPath = 'pdf/' . $row["pdf_attachment"];
+                                            $pdfButton = '';
 
-                                        // Überprüfen, ob ein PDF-Anhang vorhanden ist
-                                        if (!empty($row["pdf_attachment"])) {
-                                            $pdfButton = "<a href='$pdfPath' target='_blank' class='btn btn-sm btn-primary'>PDF</a>";
-                                        }
+                                            // Überprüfen, ob ein PDF-Anhang vorhanden ist
+                                            if (!empty($row["pdf_attachment"])) {
+                                                $pdfButton = "<a href='$pdfPath' target='_blank' class='btn btn-sm btn-primary'>PDF</a>";
+                                            }
+                                            if (!empty($row["tags"])) {
+                                                // Tags als Badges generieren
+                                                $tags = explode(",", $row["tags"]);
+                                                $tagBadges = "";
+                                                foreach ($tags as $tag) {
+                                                    $tagBadges .= "<span class='badge bg-secondary'>$tag</span> ";
+                                                }
 
-                                        // Tags als Badges generieren
-                                        $tags = explode(",", $row["tags"]);
-                                        $tagBadges = "";
-                                        foreach ($tags as $tag) {
-                                            $tagBadges .= "<span class='badge bg-secondary'>$tag</span> ";
-                                        }
-
-                                        echo "<tr>
+                                            } else {
+                                                $tagBadges = "";
+                                            }
+                                            echo "<tr>
                     <td>" . $row["name"] . "</td>
                     <td>" . $row["autor"] . "</td>
                     <td>" . $row["ton"] . "</td>
@@ -472,14 +477,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <td>" . $row["datum"] . "</td>
                     <td>" . $row["gesamt_abspielungen"] . "</td>
                 </tr>";
+                                        }
+                                    } else {
+                                        echo "<tr><td colspan='8'>Keine Lieder gefunden.</td></tr>";
                                     }
-                                } else {
-                                    echo "<tr><td colspan='8'>Keine Lieder gefunden.</td></tr>";
-                                }
-                                ?>
-                            </tbody>
-                        </table>
-                    </div>
+                                    ?>
+                                </tbody>
+                            </table>
+                        </div>
                         <!-- Modal für die Bearbeitung -->
                         <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel"
                             aria-hidden="true">
@@ -563,7 +568,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </script>
 
         <script>
-       $(document).ready(function () {
+        
+$(document).ready(function () {
     var table = $('#liederTable').DataTable();
 
     // Funktion zum Speichern der Checkbox-Zustände im Local Storage
@@ -578,18 +584,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         localStorage.setItem('selectedColumns', JSON.stringify(selectedColumns));
     }
 
-    // Funktion zum Laden der Checkbox-Zustände aus dem Local Storage
-    function loadColumnSelection() {
-        var selectedColumns = JSON.parse(localStorage.getItem('selectedColumns'));
-        if (selectedColumns) {
-            selectedColumns.forEach(function (column) {
-                $('#' + column.id).prop('checked', column.checked);
-                var columnIndex = $('#' + column.id).attr('data-column');
-                var column = table.column(columnIndex);
-                column.visible(column.checked);
-            });
-        }
+// Funktion zum Laden der Checkbox-Zustände aus dem Local Storage
+function loadColumnSelection() {
+    var selectedColumns = JSON.parse(localStorage.getItem('selectedColumns'));
+    console.log('Loaded selectedColumns from Local Storage: ', selectedColumns);
+    if (selectedColumns) {
+        selectedColumns.forEach(function (checkbox) {  // Hier umbenannt
+            $('#' + checkbox.id).prop('checked', checkbox.checked);
+            var columnIndex = $('#' + checkbox.id).attr('data-column');  // Hier geändert
+            console.log('data-column attribute of ' + checkbox.id + ' is ' + columnIndex);
+            var column = table.column(columnIndex);
+            column.visible(checkbox.checked);  // Hier geändert
+            console.log('Setting visibility of column ' + columnIndex + ' to ' + checkbox.checked);  // Hier geändert
+        });
     }
+}
+
+
+
+    // Setzen Sie das Timeout direkt nach der Definition der Funktion
+    setTimeout(loadColumnSelection, 1000);
 
     $('.dropdown-menu input[type="checkbox"]').on('change', function () {
         var column = table.column($(this).attr('data-column'));
@@ -597,10 +611,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         saveColumnSelection();
     });
 
-    // Checkbox-Zustände beim Laden der Seite wiederherstellen
-    loadColumnSelection();
+    // Entfernen Sie diesen direkten Aufruf von loadColumnSelection
+    // loadColumnSelection();
 });
 
+
+console.log('data-column attribute of ' + column.id + ' is ' + $('#' + column.id).attr('data-column'));
+
+      
         </script>
 
         <script>
@@ -643,70 +661,71 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 </style>
 
-  <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
-        <script>
-            $(function () {
-                // Autocomplete für Lied
-                $("#lied").autocomplete({
-                    source: function (request, response) {
-                        $.ajax({
-                            url: "autocomplete.php",
-                            type: "GET",
-                            dataType: "json",
-                            data: {
-                                search: request.term
-                            },
-                            success: function (data) {
-                                response(data);
-                            }
-                        });
+<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
+<script>
+    $(function () {
+        // Autocomplete für Lied
+        $("#lied").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "autocomplete.php",
+                    type: "GET",
+                    dataType: "json",
+                    data: {
+                        search: request.term
                     },
-                    minLength: 2,
-                    select: function (event, ui) {
-                        var selectedLied = ui.item.value;
-                        $("#lied").val(selectedLied);
-                        return false; // Prevent default selection behavior
+                    success: function (data) {
+                        response(data);
+                    }
+                });
+            },
+            minLength: 2,
+            select: function (event, ui) {
+                var selectedLied = ui.item.value;
+                $("#lied").val(selectedLied);
+                return false; // Prevent default selection behavior
+            }
+        });
+
+        $(document).ready(function () {
+            // Submit-Handler für das spezifische Formular mit der ID "meinFormular"
+            $("#meinFormular").submit(function (event) {
+                event.preventDefault(); // Prevent form submission
+
+                // Restlicher JavaScript-Code bleibt unverändert
+                var selectedLied = $("#lied").val();
+                var selectedDatum = $("#datum").val();
+
+                // Debug-Ausgabe (kann entfernt werden)
+                console.log("Ausgewähltes Lied: " + selectedLied);
+                console.log("Ausgewähltes Datum: " + selectedDatum);
+
+                // Hier wird der Code zum Speichern der Daten in der Datenbank eingefügt
+                $.ajax({
+                    url: "save.php", // Pfad zur PHP-Datei für das Speichern der Daten
+                    type: "POST",
+                    data: {
+                        lied: selectedLied,
+                        datum: selectedDatum
+                    },
+                    success: function (response) {
+                        // Erfolgsbehandlung
+                        console.log("Daten erfolgreich gespeichert.");
+                        // Hier kannst du weitere Aktionen ausführen oder eine Bestätigungsmeldung anzeigen
+                    },
+                    error: function (xhr, status, error) {
+                        // Fehlerbehandlung
+                        console.log("Fehler beim Speichern der Daten.");
+                        // Hier kannst du entsprechend reagieren und eine Fehlermeldung anzeigen
                     }
                 });
 
-                // Submit-Handler für das Formular
-                $("form").submit(function (event) {
-                    event.preventDefault(); // Prevent form submission
-
-                    // Lied und Datum auslesen
-                    var selectedLied = $("#lied").val();
-                    var selectedDatum = $("#datum").val();
-
-                    // Debug-Ausgabe (kann entfernt werden)
-                    console.log("Ausgewähltes Lied: " + selectedLied);
-                    console.log("Ausgewähltes Datum: " + selectedDatum);
-
-                    // Hier wird der Code zum Speichern der Daten in der Datenbank eingefügt
-                    $.ajax({
-                        url: "save.php", // Pfad zur PHP-Datei für das Speichern der Daten
-                        type: "POST",
-                        data: {
-                            lied: selectedLied,
-                            datum: selectedDatum
-                        },
-                        success: function (response) {
-                            // Erfolgsbehandlung
-                            console.log("Daten erfolgreich gespeichert.");
-                            // Hier kannst du weitere Aktionen ausführen oder eine Bestätigungsmeldung anzeigen
-                        },
-                        error: function (xhr, status, error) {
-                            // Fehlerbehandlung
-                            console.log("Fehler beim Speichern der Daten.");
-                            // Hier kannst du entsprechend reagieren und eine Fehlermeldung anzeigen
-                        }
-                    });
-
-                    // Optional: Formular zurücksetzen
-                    $("#lied").val("");
-                    $("#datum").val("");
-                });
+                // Optional: Formular zurücksetzen
+                $("#lied").val("");
+                $("#datum").val("");
             });
-        </script>
+        });
+</script>
 
 </body>
 
