@@ -74,8 +74,6 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
 
             $conn->query($abspielungenQuery);
 
-
-
             $sql = "INSERT INTO lieder (name, autor, ton, pdf_attachment, hinzugefuegt_am, benutzer_id, tags)
             VALUES ('$name', '$autor', '$ton', '$pdf_attachment', '$hinzugefuegt_am', '$benutzer_id', '$tags')";
 
@@ -96,9 +94,6 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
                     echo "Fehler beim Abrufen der ID des hinzugefügten Liedes.";
                 }
             }
-
-
-
         }
         // Bearbeiten eines vorhandenen Lieds
         elseif ($_POST["action"] == "edit") {
@@ -175,6 +170,7 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
 
         // Abrufen der Lied-ID
         $liedId = $_POST["lied"];
+        $datum = $_POST["datum"];
 
         // Aktualisieren der Abspielungen in der Tabelle "abspielungen"
         $abspielungenQuery = "INSERT INTO abspielungen (lieder_id, gesamt_abspielungen)
@@ -182,42 +178,58 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
                               ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
 
         $conn->query($abspielungenQuery);
+
+        // Einfügen des Liedes und des Datums in die Tabelle "lieder_datum"
+        $liederDatumQuery = "INSERT INTO lieder_datum (lied_id, datum)
+                             VALUES ('$liedId', '$datum')";
+
+        $conn->query($liederDatumQuery);
     }
 
-}
+    // Überprüfen, ob ein POST-Request gesendet wurde
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        // Die ausgewählten Checkbox-Werte erhalten
+        $checkboxName = isset($_POST["checkboxName"]) ? 1 : 0;
+        $checkboxAutor = isset($_POST["checkboxAutor"]) ? 1 : 0;
+        $checkboxTonart = isset($_POST["checkboxTonart"]) ? 1 : 0;
+        $checkboxDatei = isset($_POST["checkboxDatei"]) ? 1 : 0;
+        $checkboxBenutzername = isset($_POST["checkboxBenutzername"]) ? 1 : 0;
+        $checkboxAktionen = isset($_POST["checkboxAktionen"]) ? 1 : 0;
+        $checkboxDatum = isset($_POST["checkboxDatum"]) ? 1 : 0;
+        $checkboxGesamtAbspielungen = isset($_POST["checkboxGesamtAbspielungen"]) ? 1 : 0;
+        $checkboxTags = isset($_POST["checkboxTags"]) ? 1 : 0;
 
+        // Tabellenname und Primärschlüsselwert (Beispiel)
+        $tableName = "Benutzereinstellungen";
+        $primaryKeyValue = 1;
 
+        // SQL-Update-Abfrage erstellen
+        $sql = "UPDATE $tableName SET Wert = CONCAT('$checkboxName', ',', '$checkboxAutor', ',', '$checkboxTonart', ',', '$checkboxDatei', ',', '$checkboxBenutzername', ',', '$checkboxAktionen', ',', '$checkboxDatum', ',', '$checkboxGesamtAbspielungen', ',', '$checkboxTags') WHERE EinstellungsID = $primaryKeyValue";
 
-// Überprüfen, ob ein POST-Request gesendet wurde
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Die ausgewählten Checkbox-Werte erhalten
-    $checkboxName = isset($_POST["checkboxName"]) ? 1 : 0;
-    $checkboxAutor = isset($_POST["checkboxAutor"]) ? 1 : 0;
-    $checkboxTonart = isset($_POST["checkboxTonart"]) ? 1 : 0;
-    $checkboxDatei = isset($_POST["checkboxDatei"]) ? 1 : 0;
-    $checkboxBenutzername = isset($_POST["checkboxBenutzername"]) ? 1 : 0;
-    $checkboxAktionen = isset($_POST["checkboxAktionen"]) ? 1 : 0;
-    $checkboxDatum = isset($_POST["checkboxDatum"]) ? 1 : 0;
-    $checkboxGesamtAbspielungen = isset($_POST["checkboxGesamtAbspielungen"]) ? 1 : 0;
-    $checkboxTags = isset($_POST["checkboxTags"]) ? 1 : 0;
-
-    // Tabellenname und Primärschlüsselwert (Beispiel)
-    $tableName = "Benutzereinstellungen";
-    $primaryKeyValue = 1;
-
-    // SQL-Update-Abfrage erstellen
-    $sql = "UPDATE $tableName SET Wert = CONCAT('$checkboxName', ',', '$checkboxAutor', ',', '$checkboxTonart', ',', '$checkboxDatei', ',', '$checkboxBenutzername', ',', '$checkboxAktionen', ',', '$checkboxDatum', ',', '$checkboxGesamtAbspielungen', ',', '$checkboxTags') WHERE EinstellungsID = $primaryKeyValue";
-
-    // Update-Abfrage ausführen
-    if ($conn->query($sql) === TRUE) {
-        echo "Die Werte wurden erfolgreich in der Datenbank aktualisiert.";
-    } else {
-        echo "Fehler beim Aktualisieren der Werte in der Datenbank: " . $conn->error;
+        // Update-Abfrage ausführen
+        if ($conn->query($sql) === TRUE) {
+            echo "Die Werte wurden erfolgreich in der Datenbank aktualisiert.";
+        } else {
+            echo "Fehler beim Aktualisieren der Werte in der Datenbank: " . $conn->error;
+        }
     }
+
+    // Daten aus dem Formular erhalten
+$lied = $_POST['lied'];
+$datum = $_POST['datum'];
+
+// SQL-Query zum Einfügen der Daten in die Datenbank
+$sql = "INSERT INTO lieder_datum (lied_id, datum) SELECT id, '$datum' FROM lieder WHERE name = '$lied'";
+
+if ($conn->query($sql) === TRUE) {
+    echo "Daten erfolgreich gespeichert.";
+} else {
+    echo "Fehler beim Speichern der Daten: " . $conn->error;
 }
 
-
+}
 ?>
+
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.1/css/dataTables.bootstrap5.min.css">
 <script type="text/javascript" src="https://cdn.datatables.net/1.11.1/js/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/1.11.1/js/dataTables.bootstrap5.min.js"></script>
@@ -242,32 +254,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
 
-                        <form id="meinFormular" method="post" action="">
-                            <div class="mb-3">
-                                <label for="lied" class="form-label">Lied auswählen:</label>
-                                <input class="form-control" type="text" id="lied" name="lied" list="liederList"
-                                    required>
-                                <datalist id="liederList">
-                                    <?php
-                                    // Lieder aus der Datenbank abrufen und Duplikate entfernen
-                                    $sql = "SELECT DISTINCT name FROM lieder";
-                                    $result = $conn->query($sql);
+                     <form id="meinFormular" method="post">
+    <div class="mb-3">
+        <label for="lied" class="form-label">Lied auswählen:</label>
+        <input class="form-control" type="text" id="lied" name="lied" list="liederList" required>
+        <datalist id="liederList">
+            <?php
+            // Lieder aus der Datenbank abrufen und Duplikate entfernen
+            $sql = "SELECT DISTINCT name FROM lieder";
+            $result = $conn->query($sql);
 
-                                    if ($result->num_rows > 0) {
-                                        while ($row = $result->fetch_assoc()) {
-                                            echo "<option value='" . $row["name"] . "'>";
-                                        }
-                                    }
-                                    ?>
-                                </datalist>
-                            </div>
-                            <div class="mb-3">
-                                <label for="datum" class="form-label">Datum:</label>
-                                <input type="date" class="form-control" id="datum" name="datum" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary" onclick="location.reload()">Zu Datum
-                                hinzufügen</button>
-                        </form>
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    echo "<option value='" . $row["name"] . "'>";
+                }
+            }
+            ?>
+        </datalist>
+    </div>
+    <div class="mb-3">
+        <label for="datum" class="form-label">Datum:</label>
+        <input type="date" class="form-control" id="datum" name="datum" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Zu Datum hinzufügen</button>
+</form>
+
                         <h1>Lieder hinzufügen</h1>
                         <form method="post" action="" enctype="multipart/form-data">
                             <div class="mb-3">
@@ -686,45 +697,44 @@ console.log('data-column attribute of ' + column.id + ' is ' + $('#' + column.id
                 return false; // Prevent default selection behavior
             }
         });
+$(document).ready(function () {
+    // Submit-Handler für das spezifische Formular mit der ID "meinFormular"
+    $("#meinFormular").submit(function (event) {
+        event.preventDefault(); // Prevent form submission
 
-        $(document).ready(function () {
-            // Submit-Handler für das spezifische Formular mit der ID "meinFormular"
-            $("#meinFormular").submit(function (event) {
-                event.preventDefault(); // Prevent form submission
+        // Restlicher JavaScript-Code bleibt unverändert
+        var selectedLied = $("#lied").val();
+        var selectedDatum = $("#datum").val();
 
-                // Restlicher JavaScript-Code bleibt unverändert
-                var selectedLied = $("#lied").val();
-                var selectedDatum = $("#datum").val();
+        // Debug-Ausgabe (kann entfernt werden)
+        console.log("Ausgewähltes Lied: " + selectedLied);
+        console.log("Ausgewähltes Datum: " + selectedDatum);
 
-                // Debug-Ausgabe (kann entfernt werden)
-                console.log("Ausgewähltes Lied: " + selectedLied);
-                console.log("Ausgewähltes Datum: " + selectedDatum);
+        // Hier wird der Code zum Speichern der Daten in der Datenbank eingefügt
+        $.ajax({
+            url: "liederadd.php", // Pfad zur PHP-Datei für das Speichern der Daten
+            type: "POST",
+            data: {
+                lied: selectedLied,
+                datum: selectedDatum
+            },
+            success: function (response) {
+                // Erfolgsbehandlung
+                console.log("Daten erfolgreich gespeichert.");
+                // Hier kannst du weitere Aktionen ausführen oder eine Bestätigungsmeldung anzeigen
 
-                // Hier wird der Code zum Speichern der Daten in der Datenbank eingefügt
-                $.ajax({
-                    url: "save.php", // Pfad zur PHP-Datei für das Speichern der Daten
-                    type: "POST",
-                    data: {
-                        lied: selectedLied,
-                        datum: selectedDatum
-                    },
-                    success: function (response) {
-                        // Erfolgsbehandlung
-                        console.log("Daten erfolgreich gespeichert.");
-                        // Hier kannst du weitere Aktionen ausführen oder eine Bestätigungsmeldung anzeigen
-                    },
-                    error: function (xhr, status, error) {
-                        // Fehlerbehandlung
-                        console.log("Fehler beim Speichern der Daten.");
-                        // Hier kannst du entsprechend reagieren und eine Fehlermeldung anzeigen
-                    }
-                });
-
-                // Optional: Formular zurücksetzen
-                $("#lied").val("");
-                $("#datum").val("");
-            });
+                // Formular zurücksetzen und neu laden
+                $("#meinFormular")[0].reset();
+            },
+            error: function (xhr, status, error) {
+                // Fehlerbehandlung
+                console.log("Fehler beim Speichern der Daten.");
+                // Hier kannst du entsprechend reagieren und eine Fehlermeldung anzeigen
+            }
         });
+    });
+});
+
 </script>
 
 </body>
