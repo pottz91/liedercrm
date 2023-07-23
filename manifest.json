@@ -1,5 +1,5 @@
 {
-    "name": "    ProJeCt Chor    -    ProJeCt - Liederportal",
+    "name": "    ProJeCt Chor                                           Liederportal",
     "short_name": "Chor",
     "start_url": "index.php",
     "scope": "./",
@@ -15,7 +15,7 @@
             "type": "image/png"
         }
     ],
-    "theme_color": "#007500",
+    "theme_color": "#283b79",
     "background_color": "#333",
     "display": "standalone"
 }
