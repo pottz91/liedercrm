@@ -4,8 +4,6 @@ include 'auth.php';
 session_start();
 ?>
 
-
-
 <?php
 include 'datenbank.php';
 
@@ -23,11 +21,14 @@ if ($result === false) {
     die("Datenbankabfrage fehlgeschlagen: " . $conn->error);
 }
 
+$sql = "SELECT name, autor, hinzugefuegt_am FROM lieder ORDER BY hinzugefuegt_am DESC";
+$result = $conn->query($sql);
+
 // Daten für die Liste erstellen
 $listItems = "";
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        $datum = date("d.m.Y", strtotime($row["datum"])); // Hier die Änderung
+        $datum = date("d.m.Y", strtotime($row["hinzugefuegt_am"])); // Hier die Änderung
         $class = ($datum == date("d.m.Y")) ? "text-success" : ""; // Hervorhebung für das aktuelle Datum
         $listItems .= "<li class='py-2 {$class}'>" . $row["name"] . " - " . $datum . "</li>";
         $listItems .= "<hr class='my-1'>"; // Trennstrich
@@ -36,8 +37,8 @@ if ($result->num_rows > 0) {
     $listItems = "<li>Keine Daten vorhanden.</li>";
 }
 
-// Datenbankverbindung schließen
-$conn->close();
+
+
 ?>
 
 
@@ -62,76 +63,65 @@ $conn->close();
 
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-
+                        <h1 class="h3 font-weight-bold text-green-800 mb-1">Dashboard</h1>
                     </div>
 
                     <!-- Content Row -->
                     <div class="row">
                         <div class="col-xl-6 col-md-6 mb-4">
-                            <div class="card border-left-success shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                                Anstehende Lieder</div>
-                                            <div class="scrollable-list">
-                                                <ul class="list-unstyled">
-                                                    <?php echo $listItems; ?>
-                                                </ul>
-                                            </div>
-                                        </div>
+                            <div class="card border-left-success shadow h-100 py-1">
+                                <div class="card-header shadow mb-1">
+                                    <div class="text-x font-weight-bold text-success text-uppercase mb-1">Anstehende Lieder</div>
+                                </div>
+                                <div class="col mr-2">
+                                    <div class="scrollable-list">
+                                        <ul class="list-unstyled">
+                                            <?php echo $listItems; ?>
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
+
+
+
                         <!-- Area Chart -->
                         <div class="col-xl-6 col-md-6 mb-4">
-                            <!--<div class="card shadow mb-4">-->
-                            <div class="card border-left-success shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                                Letzte angelegte Lieder</div>
-
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <?php
-                                include 'datenbank.php';
-
-                                // SQL-Abfrage ausführen, um die Liederdaten zu erhalten
-                                $sql = "SELECT name, autor, DATE_FORMAT(hinzugefuegt_am, '%d.%m.%Y') AS hinzugefuegt_am_formatted FROM lieder ORDER BY hinzugefuegt_am DESC";
-                                $result = $conn->query($sql);
-
-                                // Überprüfen, ob die Abfrage erfolgreich war
-                                if ($result === false) {
-                                    die("Datenbankabfrage fehlgeschlagen: " . $conn->error);
-                                }
-                                ?>
-
-                                <div class="table-container">
-                                    <div class="mobile-dropdowns">
+                            <div class="card border-left-success shadow h-100 py-1">
+                                <div class="card-header shadow mb-1">
+                                    <div class="text-x font-weight-bold text-success text-uppercase mb-1">Letzte angelegte Lieder</div>
                                         <label for="autor-select">Autor</label>
-                                        <select id="autor-select"
-                                            onchange="toggleColumnVisibility('autor-select', 'autor-column')">
-                                            <option value="visible">Anzeigen</option>
-                                            <option value="hidden" selected>Ausblenden</option>
-                                        </select>
+                                            <select id="autor-select"
+                                                onchange="toggleColumnVisibility('autor-select', 'autor-column')">
+                                                <option value="visible">Einblenden</option>
+                                                <option value="hidden" selected>Ausblenden</option>
+                                            </select>
                                         <label for="benutzer-select">Benutzer</label>
-                                        <select id="benutzer-select"
-                                            onchange="toggleColumnVisibility('benutzer-select', 'benutzer-column')">
-                                            <option value="visible">Anzeigen</option>
-                                            <option value="hidden" selected>Ausblenden</option>
-                                        </select>
+                                            <select id="benutzer-select"
+                                                onchange="toggleColumnVisibility('benutzer-select', 'benutzer-column')">
+                                                <option value="visible">Anzeigen</option>
+                                                <option value="hidden" selected>Ausblenden</option>
+                                            </select>
                                     </div>
+
+                                    <?php
+                                    include 'datenbank.php';
+
+                                    // SQL-Abfrage ausführen, um die Liederdaten zu erhalten
+                                    $sql = "SELECT name, autor, DATE_FORMAT(hinzugefuegt_am, '%d.%m.%Y') AS hinzugefuegt_am_formatted FROM lieder ORDER BY hinzugefuegt_am DESC";
+                                    $result = $conn->query($sql);
+
+                                    // Überprüfen, ob die Abfrage erfolgreich war
+                                    if ($result === false) {
+                                        die("Datenbankabfrage fehlgeschlagen: " . $conn->error);
+                                    }
+                                    ?>
+
                                     <div class="table table-borderless">
                                         <div class="scrollable-list">
-                                            <table class="table">
-                                                <thead class="sticky-header">
+                                            <table class="table table-striped">
+                                                <thead style="z-index 1; background-color: white"  class="sticky-header">
                                                     <tr>
                                                         <th>Name</th>
                                                         <th class="optional-column autor-column">Autor</th>
@@ -139,19 +129,23 @@ $conn->close();
                                                         <th class="optional-column benutzer-column">Benutzer</th>
                                                     </tr>
                                                 </thead>
-                                                <style>
-                                                    .scrollable-list {
-                                                        max-height: 400px;
-                                                        overflow-y: auto;
-                                                    }
+                                            <style>
+                                                .scrollable-list {
+                                                    max-height: 400px;
+                                                    overflow-y: auto;
+                                                }
 
-                                                    .sticky-header {
-                                                        position: sticky;
-                                                        top: 0;
-                                                        background-color: #fff;
-                                                        z-index: 1;
-                                                    }
-                                                </style>
+                                                .sticky-header {
+                                                    position: sticky;
+                                                    top: -10;
+                                                    background-color: #fff;
+                                                    z-index: 1;
+                                                }
+
+                                                .table-striped tbody tr:nth-of-type(odd) {
+                                                      background-color: #ffffff !important;
+                                                }
+                                            </style>
                                                 <tbody>
                                                     <?php
                                                     if ($result->num_rows > 0) {
@@ -160,81 +154,65 @@ $conn->close();
                                                             $benutzer_id = getBenutzerId($row["autor"]);
                                                             $benutzername = getBenutzername($benutzer_id);
 
-                                                            echo "<tr>
-                                            <td>" . $row["name"] . "</td>
-                                            <td class='optional-column autor-column'>" . $row["autor"] . "</td>
-                                            <td>" . $row["hinzugefuegt_am_formatted"] . "</td>
-                                            <td class='optional-column benutzer-column'>" . $benutzername . "</td>
-                                          </tr>
-                                          <tr>
-                                            <td colspan='4'><hr class='my-1'></td>
-                                          </tr>";
-                                                        }
-                                                    } else {
                                                         echo "<tr>
-                                        <td colspan='4'>Keine Daten vorhanden.</td>
-                                      </tr>";
-                                                    }
+                                                            <td>" . $row["name"] . "</td>
+                                                            <td class='optional-column autor-column'>" . $row["autor"] . "</td>
+                                                            <td>" . $row["hinzugefuegt_am_formatted"] . "</td>
+                                                            <td class='optional-column benutzer-column'>" . $benutzername . "</td>
+                                                        </tr>
+                                                        ";
+                                                            }
+                                                        } else {
+                                                            echo "<tr>
+                                                            <td colspan='4'>Keine Daten vorhanden.</td>
+                                                            </tr>";
+                                                        }
                                                     ?>
 
                                                 </tbody>
-                                            </table>
-                                        </div>
+                                        </table>
                                     </div>
                                 </div>
+                            </div>
 
 
-                                <script>
-                                    function toggleColumnVisibility(selectId, columnClass) {
-                                        var select = document.getElementById(selectId);
-                                        var optionValue = select.value;
-                                        var columns = document.getElementsByClassName(columnClass);
+                            <script>
+                                function toggleColumnVisibility(selectId, columnClass) {
+                                    var select = document.getElementById(selectId);
+                                    var optionValue = select.value;
+                                    var columns = document.getElementsByClassName(columnClass);
 
-                                        for (var i = 0; i < columns.length; i++) {
-                                            if (optionValue === 'hidden') {
-                                                columns[i].style.display = 'none';
-                                            } else {
-                                                columns[i].style.display = '';
-                                            }
+                                    for (var i = 0; i < columns.length; i++) {
+                                        if (optionValue === 'hidden') {
+                                            columns[i].style.display = 'none';
+                                        } else {
+                                            columns[i].style.display = '';
                                         }
                                     }
+                                }
 
-                                    // Initialer Aufruf der toggleColumnVisibility Funktion
-                                    window.addEventListener('DOMContentLoaded', function () {
-                                        toggleColumnVisibility('autor-select', 'autor-column');
-                                        toggleColumnVisibility('benutzer-select', 'benutzer-column');
-                                    });
-                                </script>
-                                <!--</div>-->
-                            </div>
+                                // Initialer Aufruf der toggleColumnVisibility Funktion
+                                window.addEventListener('DOMContentLoaded', function () {
+                                    toggleColumnVisibility('autor-select', 'autor-column');
+                                    toggleColumnVisibility('benutzer-select', 'benutzer-column');
+                                });
+                            </script>
+                            <!--</div>-->
                         </div>
-
-
-
-
-
-
-
                     </div>
 
                     <!-- Content Row -->
 
                     <div class="row">
                         <div class="col-xl-6 col-md-6 mb-4">
-                            <div class="card border-left-primary shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                Lieder (Gesamt)</div>
-                                            <div id="chart"></div>
-                                        </div>
-
-                                    </div>
+                            <div class="card border-left-success shadow h-100 py-1">
+                                <div class="card-header shadow mb-1">
+                                    <div class="text-x font-weight-bold text-success text-uppercase mb-1">Lieder (Gesamt)</div>
                                 </div>
-
+                                <div class="col mr-2">
+                                    <div id="chart"></div>
+                                </div>
                             </div>
-
                         </div>
 
                         <?php
@@ -271,12 +249,11 @@ $conn->close();
 
                         ?>
                         <div class="col-xl-6 col-md-6 mb-4">
-                            <div class="card border-left-success shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                                Gesamtzahl der Abspielungen</div>
+                            <div class="card border-left-success shadow h-100 py-1">
+                                <div class="card-header shadow mb-1">
+                                    <div class="text-x font-weight-bold text-success text-uppercase mb-1">Gesamtzahl der Abspielungen</div>
+                                </div>
+                                <div class="col mr-2">
                                             <div class="scrollable-list">
                                                 <ul class="list-unstyled">
                                                     <?php
@@ -372,8 +349,7 @@ $conn->close();
             );
         }
 
-        // Datenbankverbindung schließen
-        $conn->close();
+  
 
         // PHP-Daten an JavaScript übergeben
         echo "const chartData = " . json_encode($chartData) . ";";
