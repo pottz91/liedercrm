@@ -43,17 +43,26 @@ $liedVorschlaege = getLiedVorschlaege(30);
         <div id="content-wrapper" class="d-flex flex-column">
             <?php include 'topbar.php'; ?>
             <!-- Main Content -->
+
             <div id="content" class="container" style="margin-bottom: 200px">
+            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 font-weight-bold text-green-800 ml-2 mb-1">Statistik</h1>
+                    </div>
+            <div class="col-xl-12 col-md-12 mb-12">
+                    <div class="card border-left-success h-50 py-1">
+                        <div class="card-header shadow mb-1">
+                            <div class="text-x font-weight-bold text-success text-uppercase mb-1">Wie oft wurde das Lied gespielt:</div>
+                        <!--</div>-->
                 <form action="" method="get">
-                    <label for="zeitraum">Zeitraum:</label>
+                    <label for="zeitraum" class="custom-label">Zeitraum:</label>
                     <select name="zeitraum" id="zeitraum" onchange="this.form.submit()">
                         <option value="alle" <?php echo isset($_GET['zeitraum']) && $_GET['zeitraum'] == 'alle' ? 'selected' : ''; ?>>Alle</option>
-                        <option value="14tage" <?php echo isset($_GET['zeitraum']) && $_GET['zeitraum'] == '14tage' ? 'selected' : ''; ?>>Letzte 14 Tage</option>
-                        <option value="30tage" <?php echo isset($_GET['zeitraum']) && $_GET['zeitraum'] == '30tage' ? 'selected' : ''; ?>>Letzte 30 Tage</option>
-                        <option value="60tage" <?php echo isset($_GET['zeitraum']) && $_GET['zeitraum'] == '60tage' ? 'selected' : ''; ?>>Letzte 60 Tage</option>
+                        <option value="14tage" <?php echo isset($_GET['zeitraum']) && $_GET['zeitraum'] == '14tage' ? 'selected' : ''; ?>>Letzte 150 Tage</option>
+                        <option value="30tage" <?php echo isset($_GET['zeitraum']) && $_GET['zeitraum'] == '30tage' ? 'selected' : ''; ?>>Letzte 365 Tage</option>
+                        <option value="60tage" <?php echo isset($_GET['zeitraum']) && $_GET['zeitraum'] == '60tage' ? 'selected' : ''; ?>>Letzte 730 Tage</option>
                     </select>
 
-                    <label for="liedname">Liedname:</label>
+                    <label for="liedname" class="custom-label flex">Liedname:</label>
                     <select name="liedname" id="liedname">
                         <option value="">Alle</option>
                         <?php
@@ -73,10 +82,10 @@ $liedVorschlaege = getLiedVorschlaege(30);
                         }
                         ?>
                     </select>
-
+                    
                     <button class="btn btn-primary btn-sm" type="submit">Filtern</button>
                 </form>
-
+                </div>
                 <?php
                 // Filter für den Zeitraum
                 $zeitraum = isset($_GET['zeitraum']) ? $_GET['zeitraum'] : 'alle';
@@ -119,6 +128,12 @@ $liedVorschlaege = getLiedVorschlaege(30);
                             ORDER BY abspielungen DESC";
                 }
 
+                // Pagination-Parameter
+                $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+                $perPage = 10; // Anzahl der Datensätze pro Seite
+                $offset = ($page - 1) * $perPage;
+                $sql .= " LIMIT $perPage OFFSET $offset";
+
                 $result = $conn->query($sql);
 
                 if ($result === false) {
@@ -134,43 +149,83 @@ $liedVorschlaege = getLiedVorschlaege(30);
                 }
                 ?>
 
-                <div class="card card-body mb-4" id="chart"></div>
+               <div class="card card-body mb-0" id="chart"></div>
+            </div>
+            <div class="mb-4"></div> <!--Leerzeile-->
 
-                <div class="row">
-                    <div class="col">
-                        <h3>Diese Lieder könntet ihr wieder spielen:</h3>
-                        <?php
-                        // Ausgabe der Liedvorschläge in Form von Cards
-                        foreach ($liedVorschlaege as $lied) {
-                            echo "<div class='card card-body pb-3 mb-1'>$lied</div>";
-                        }
-                        ?>
+            <div id="content-wrapper" class="d-flex flex-column">
+    <div id="content" class="container" style="margin-bottom: 200px">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 font-weight-bold text-green-800 ml-2 mb-1">Test</h1>
+        </div>
+        <div class="col-xl-12 col-md-12 mb-12">
+            <div class="card border-left-success shadow h-100 py-1">
+                <div class="card-header shadow mb-1">
+                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Diese Lieder könntet ihr wieder spielen:</div>
+                    <form></form>
+                </div>
+                <div class="col">
+                    <div class="scrollable-list">
+                        <table class="table table-striped table-borderless">
+                            <?php
+                            // Ausgabe der Liedvorschläge in Form von Cards
+                            foreach ($liedVorschlaege as $lied) {
+                                echo "<tr><td class='card-list card-body pb-3 mb-1'>$lied</td></tr>";
+                            }
+                            ?>
+                        </table>
                     </div>
                 </div>
-
-                <script>
-                    document.addEventListener("DOMContentLoaded", function () {
-                        const options = {
-                            chart: {
-                                type: 'bar',
-                                height: 350
-                            },
-                            series: [{
-                                name: 'Abspielungen',
-                                data: <?php echo json_encode($chartData); ?>
-                            }],
-                            xaxis: {
-                                type: 'category',
-                            },
-                        };
-
-                        const chart = new ApexCharts(document.querySelector("#chart"), options);
-                        chart.render();
-                    });
-                </script>
             </div>
+
+            <style>
+                .scrollable-list {
+                    max-height: 400px;
+                    overflow-y: auto;
+                }
+
+                .sticky-header {
+                    position: sticky;
+                    top: -10;
+                    background-color: #fff;
+                    z-index: 1;
+                }
+
+                .table-striped tbody tr:nth-of-type(odd) {
+                    background-color: #ffffff !important;
+                }
+
+                .custom-label {
+                    margin-left: 20px;
+                }
+            </style>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    const options = {
+                        chart: {
+                            type: 'bar',
+                            height: 350
+                        },
+                        series: [{
+                            name: 'Abspielungen',
+                            data: <?php echo json_encode($chartData); ?>
+                        }],
+                        xaxis: {
+                            type: 'category',
+                        },
+                    };
+
+                    const chart = new ApexCharts(document.querySelector("#chart"), options);
+                    chart.render();
+                });
+            </script>
         </div>
     </div>
-</body>
+</div>   
+<?php
+            include 'footer.php';
+            ?>
+    </body>
 
 </html>
