@@ -7,38 +7,11 @@ session_start();
 <?php
 include 'datenbank.php';
 
+//Code für bessere Fehlersuche
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 
-date_default_timezone_set('Europe/Berlin');
-$heute = date("Y-m-d");
-
-$datumVor30Tagen = date("Y-m-d", strtotime("-30 days")); // Datum vor 30 Tagen im Format 'Y-m-d'
-
-$sql = "SELECT lieder.name, lieder_datum.datum
-        FROM lieder
-        LEFT JOIN lieder_datum ON lieder.id = lieder_datum.lied_id
-        WHERE (lieder_datum.datum >= '$heute' OR lieder_datum.datum >= '$datumVor30Tagen')
-        ORDER BY lieder_datum.datum DESC";
-$result = $conn->query($sql);
-
-// Überprüfen, ob die Abfrage erfolgreich war
-if ($result === false) {
-    die("Datenbankabfrage fehlgeschlagen: " . $conn->error);
-}
-
-// Daten für die Liste erstellen
-$listItems = "";
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $datum = date("d.m.Y", strtotime($row["datum"]));
-        $class = (strtotime($row["datum"]) >= strtotime($heute)) ? "text-success" : "";
-        $listItems .= "<li class='py-2 {$class}'>" . $row["name"] . " - " . $datum . "</li>";
-        $listItems .= "<hr class='my-1'>";
-    }
-} else {
-    $listItems = "<li>Keine Daten vorhanden.</li>";
-}
+include 'anstehendelieder.php';
 
 ?>
 
