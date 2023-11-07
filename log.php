@@ -1,6 +1,12 @@
 <?php
 include 'datenbank.php'; // Datenbankverbindung herstellen
 
+//Code für bessere Fehlersuche
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
+
+//Zeitzone festlegen
+date_default_timezone_set('Europe/Berlin');
 
 // Funktion zum Protokollieren einer Aktivität
 function logAktivitaet($benutzerID, $aktivitaet)
