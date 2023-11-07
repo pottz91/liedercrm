@@ -2,6 +2,10 @@
 include 'datenbank.php';
 include 'auth.php';
 
+//Code für bessere Fehlersuche
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
+
 // Funktion, um Liedvorschläge zu erhalten
 function getLiedVorschlaege($tage)
 {
@@ -44,18 +48,18 @@ $liedVorschlaege = getLiedVorschlaege(30);
             <?php include 'topbar.php'; ?>
             <!-- Main Content -->
 
-            <div id="content" class="container" style="margin-bottom: 200px">
+            <div id="content" class="container" style="margin-bottom: 100px">
             <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 font-weight-bold text-green-800 ml-2 mb-1">Statistik</h1>
                     </div>
             <div class="col-xl-12 col-md-12 mb-12">
-                    <div class="card border-left-success h-50 py-1">
+                    <div class="card border-left-success h-10 py-1">
                         <div class="card-header shadow mb-1">
                             <div class="text-x font-weight-bold text-success text-uppercase mb-1">Wie oft wurde das Lied gespielt:</div>
                         <!--</div>-->
                 <form action="" method="get">
                     <label for="zeitraum" class="custom-label">Zeitraum:</label>
-                    <select name="zeitraum" id="zeitraum" onchange="this.form.submit()">
+                    <select name="zeitraum" id="zeitraum" onchange="this.form.submit()" style="width: 70px;">
                         <option value="alle" <?php echo isset($_GET['zeitraum']) && $_GET['zeitraum'] == 'alle' ? 'selected' : ''; ?>>Alle</option>
                         <option value="14tage" <?php echo isset($_GET['zeitraum']) && $_GET['zeitraum'] == '14tage' ? 'selected' : ''; ?>>Letzte 150 Tage</option>
                         <option value="30tage" <?php echo isset($_GET['zeitraum']) && $_GET['zeitraum'] == '30tage' ? 'selected' : ''; ?>>Letzte 365 Tage</option>
@@ -63,8 +67,8 @@ $liedVorschlaege = getLiedVorschlaege(30);
                     </select>
 
                     <label for="liedname" class="custom-label flex">Liedname:</label>
-                    <select name="liedname" id="liedname">
-                        <option value="">Alle</option>
+                    <select name="liedname" id="liedname" style="width: 70px;>
+                        <option value=">Alle</option>
                         <?php
                         // SQL-Abfrage, um die verfügbaren Liednamen zu erhalten
                         $sql = "SELECT DISTINCT name FROM lieder";
@@ -149,19 +153,19 @@ $liedVorschlaege = getLiedVorschlaege(30);
                 }
                 ?>
 
-               <div class="card card-body mb-0" id="chart"></div>
+               <div class="ard ard-body mb-0" id="chart"></div>
             </div>
             <div class="mb-4"></div> <!--Leerzeile-->
 
-            <div id="content-wrapper" class="d-flex flex-column">
-    <div id="content" class="container" style="margin-bottom: 200px">
+            <!--<div id="content-wrapper" class="d-flex flex-column">-->
+    <!--<div id="content" class="container" style="margin-bottom: 30px">-->
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 font-weight-bold text-green-800 ml-2 mb-1">Test</h1>
+            <h1 class="h3 font-weight-bold text-green-800 ml-2 mb-1">Vorschläge</h1>
         </div>
-        <div class="col-xl-12 col-md-12 mb-12">
-            <div class="card border-left-success shadow h-100 py-1">
+        <!--<div class="col-xl-12 col-md-12 mb-12">-->
+            <div class="card border-left-success shadow h-10 py-1">
                 <div class="card-header shadow mb-1">
-                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Diese Lieder könntet ihr wieder spielen:</div>
+                    <div class="text-x font-weight-bold text-success text-uppercase mb-1">Lieder Vorschläge:</div>
                     <form></form>
                 </div>
                 <div class="col">
@@ -220,9 +224,9 @@ $liedVorschlaege = getLiedVorschlaege(30);
                     chart.render();
                 });
             </script>
-        </div>
-    </div>
-</div>   
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->   
 <?php
             include 'footer.php';
             ?>
