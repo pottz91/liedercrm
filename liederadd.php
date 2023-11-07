@@ -2,6 +2,13 @@
 include 'auth.php';
 include 'datenbank.php';
 
+//Code für bessere Fehlersuche
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
+
+//Zeitzone festlegen
+date_default_timezone_set('Europe/Berlin');
+
 // Überprüfen, ob das Formular zum Hinzufügen oder Bearbeiten abgeschickt wurde
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST["action"])) {
@@ -69,8 +76,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             // Abspielung des Liedes zählen und in die Tabelle "abspielungen" einfügen
             $abspielungenQuery = "INSERT INTO abspielungen (lieder_id, gesamt_abspielungen)
-VALUES ('$id', 1)
-ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
+            VALUES ('$id', 1)
+            ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
 
             $conn->query($abspielungenQuery);
 
@@ -82,14 +89,15 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
 
                 // Überprüfen, ob die ID erfolgreich abgerufen wurde
                 if ($id) {
-                    echo "<p>Lied wurde erfolgreich hinzugefügt.</p>";
-
+                    
                     // Abspielung des Liedes zählen und in die Tabelle "abspielungen" einfügen
                     $abspielungenQuery = "INSERT INTO abspielungen (lieder_id, gesamt_abspielungen)
-                                          VALUES ('$id', 1)
-                                          ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
+                    VALUES ('$id', 1)
+                    ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
 
-                    $conn->query($abspielungenQuery);
+                  $conn->query($abspielungenQuery);
+
+                    echo "<p>Lied wurde erfolgreich hinzugefügt.</p>";
                 } else {
                     echo "Fehler beim Abrufen der ID des hinzugefügten Liedes.";
                 }
@@ -213,20 +221,23 @@ ON DUPLICATE KEY UPDATE gesamt_abspielungen = gesamt_abspielungen + 1";
             echo "Fehler beim Aktualisieren der Werte in der Datenbank: " . $conn->error;
         }
     }
+  
+    if (isset($_POST["lied"]) && isset($_POST["datum"])) {
+        // Code zum Einfügen des Liedes in die lieder_datum-Tabelle
 
-    // Daten aus dem Formular erhalten
-$lied = $_POST['lied'];
-$datum = $_POST['datum'];
+        // Daten aus dem Formular erhalten
+        $lied = $_POST['lied'];
+        $datum = $_POST['datum'];
 
-// SQL-Query zum Einfügen der Daten in die Datenbank
-$sql = "INSERT INTO lieder_datum (lied_id, datum) SELECT id, '$datum' FROM lieder WHERE name = '$lied'";
+        // SQL-Query zum Einfügen der Daten in die Datenbank
+        $sql = "INSERT INTO lieder_datum (lied_id, datum) SELECT id, '$datum' FROM lieder WHERE name = '$lied'";
 
-if ($conn->query($sql) === TRUE) {
-    echo "Daten erfolgreich gespeichert.";
-} else {
-    echo "Fehler beim Speichern der Daten: " . $conn->error;
-}
-
+        if ($conn->query($sql) === TRUE) {
+            echo "Daten erfolgreich gespeichert.";
+        } else {
+            echo "Fehler beim Speichern der Daten: " . $conn->error;
+        }
+    }
 }
 ?>
 
@@ -236,48 +247,44 @@ if ($conn->query($sql) === TRUE) {
 <link rel="stylesheet" type="text/css"
     href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css">
 
-<div id="wrapper">
+    <div id="wrapper">
     <?php include 'menu.php'; ?>
 
     <!-- Content Wrapper -->
     <div id="content-wrapper" class="d-flex flex-column">
         <?php include 'topbar.php'; ?>
         <!-- Main Content -->
-        <div id="content ">
+        <div id="content">
             <!-- Begin Page Content -->
             <div class="container-fluid p-4 mb-5">
                 <div class="row">
                     <div class="p-2 col-md-3 col-lg-3 col-xl-3 card card-body">
-
-
                         <h3>Lieder zu einem Datum hinzufügen</h3>
 
+                        <form id="meinFormular" method="post">
+                            <div class="mb-3">
+                                <label for="lied" class="form-label">Lied auswählen:</label>
+                                <input class="form-control" type="text" id="lied" name="lied" list="liederList" required>
+                                <datalist id="liederList">
+                                    <?php
+                                    // Lieder aus der Datenbank abrufen und Duplikate entfernen
+                                    $sql = "SELECT DISTINCT name FROM lieder";
+                                    $result = $conn->query($sql);
 
-
-                     <form id="meinFormular" method="post">
-    <div class="mb-3">
-        <label for="lied" class="form-label">Lied auswählen:</label>
-        <input class="form-control" type="text" id="lied" name="lied" list="liederList" required>
-        <datalist id="liederList">
-            <?php
-            // Lieder aus der Datenbank abrufen und Duplikate entfernen
-            $sql = "SELECT DISTINCT name FROM lieder";
-            $result = $conn->query($sql);
-
-            if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    echo "<option value='" . $row["name"] . "'>";
-                }
-            }
-            ?>
-        </datalist>
-    </div>
-    <div class="mb-3">
-        <label for="datum" class="form-label">Datum:</label>
-        <input type="date" class="form-control" id="datum" name="datum" required>
-    </div>
-    <button type="submit" class="btn btn-primary">Zu Datum hinzufügen</button>
-</form>
+                                    if ($result->num_rows > 0) {
+                                        while ($row = $result->fetch_assoc()) {
+                                            echo "<option value='" . $row["name"] . "'>";
+                                        }
+                                    }
+                                    ?>
+                                </datalist>
+                            </div>
+                            <div class="mb-3">
+                                <label for="datum" class="form-label">Datum:</label>
+                                <input type="date" class="form-control" id="datum" name="datum" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Zu Datum hinzufügen</button>
+                        </form>
 
                         <h1>Lieder hinzufügen</h1>
                         <form method="post" action="" enctype="multipart/form-data">
@@ -313,24 +320,8 @@ if ($conn->query($sql) === TRUE) {
                             <button type="submit" class="btn btn-primary">Lied hinzufügen</button>
                         </form>
 
-
-
-
                         <?php
-                        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-                            if (isset($_POST["lied"]) && isset($_POST["datum"])) {
-                                $liedId = $_POST["lied"];
-                                $datum = $_POST["datum"];
-
-                                $sql = "INSERT INTO lieder_datum (lied_id, datum) VALUES ('$liedId', '$datum')";
-
-                                if ($conn->query($sql) === TRUE) {
-                                    echo "<p>Lied wurde erfolgreich zu Datum hinzugefügt.</p>";
-                                } else {
-                                    echo "Fehler: " . $sql . "<br>" . $conn->error;
-                                }
-                            }
-                        }
+                            include 'liederpostdatum.php';
                         ?>
 
                     </div>
@@ -444,54 +435,8 @@ if ($conn->query($sql) === TRUE) {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php
-                                    // SQL-Statement zum Abrufen der Lieder aus der Datenbank mit deutschem Datums- und Uhrzeitformat
-                                    $sql = "SELECT lieder.id, lieder.name, lieder.autor, lieder.ton, lieder.pdf_attachment, benutzer.benutzername, lieder.tags, COALESCE(DATE_FORMAT(lieder_datum.datum, '%d.%m.%Y'), DATE_FORMAT(lieder.hinzugefuegt_am, '%d.%m.%Y')) AS datum, COALESCE(abspielungen.gesamt_abspielungen, 0) AS gesamt_abspielungen
-        FROM lieder
-        LEFT JOIN benutzer ON lieder.benutzer_id = benutzer.id
-        LEFT JOIN lieder_datum ON lieder.id = lieder_datum.lied_id
-        LEFT JOIN (SELECT lieder_id, COUNT(*) AS gesamt_abspielungen FROM abspielungen GROUP BY lieder_id) AS abspielungen ON lieder.id = abspielungen.lieder_id";
-
-                                    $result = $conn->query($sql);
-
-                                    // Überprüfen, ob Zeilen in der Abfrageergebnismenge vorhanden sind
-                                    if ($result->num_rows > 0) {
-                                        while ($row = $result->fetch_assoc()) {
-                                            $pdfPath = 'pdf/' . $row["pdf_attachment"];
-                                            $pdfButton = '';
-
-                                            // Überprüfen, ob ein PDF-Anhang vorhanden ist
-                                            if (!empty($row["pdf_attachment"])) {
-                                                $pdfButton = "<a href='$pdfPath' target='_blank' class='btn btn-sm btn-primary'>PDF</a>";
-                                            }
-                                            if (!empty($row["tags"])) {
-                                                // Tags als Badges generieren
-                                                $tags = explode(",", $row["tags"]);
-                                                $tagBadges = "";
-                                                foreach ($tags as $tag) {
-                                                    $tagBadges .= "<span class='badge bg-secondary'>$tag</span> ";
-                                                }
-
-                                            } else {
-                                                $tagBadges = "";
-                                            }
-                                            echo "<tr>
-                    <td>" . $row["name"] . "</td>
-                    <td>" . $row["autor"] . "</td>
-                    <td>" . $row["ton"] . "</td>
-                    <td>$pdfButton</td>
-                    <td>" . $row["benutzername"] . "</td>
-                    <td>" . $tagBadges . "</td>
-                    <td>
-                    <button type='button' class='btn btn-sm btn-warning' data-bs-toggle='modal' data-bs-target='#editModal' data-id='" . $row["id"] . "' data-name='" . $row["name"] . "' data-autor='" . $row["autor"] . "' data-ton='" . $row["ton"] . "' data-pdf='" . $row["pdf_attachment"] . "' data-tags='" . $row["tags"] . "'>Bearbeiten</button>
-                    </td>
-                    <td>" . $row["datum"] . "</td>
-                    <td>" . $row["gesamt_abspielungen"] . "</td>
-                </tr>";
-                                        }
-                                    } else {
-                                        echo "<tr><td colspan='8'>Keine Lieder gefunden.</td></tr>";
-                                    }
+                                    <?php    
+                                        include 'liederliste_abfrage.php';
                                     ?>
                                 </tbody>
                             </table>
