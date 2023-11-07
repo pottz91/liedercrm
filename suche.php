@@ -2,6 +2,12 @@
 include 'header.php';
 include 'datenbank.php';
 include 'auth.php';
+session_start();
+
+//Code für bessere Fehlersuche
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
+
 ?>
 
 <body>
