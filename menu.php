@@ -1,3 +1,19 @@
+<?php
+//Code für bessere Fehlersuche
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
+?>
+
+<!-- Das Modalfenster -->
+<div id="myModal" class="modal">
+  <div class="modal-content">
+    <span class="close" id="closeModal">&times;</span>
+    <!-- Hier können Sie den Inhalt des Modalfensters, wie das Suchformular, hinzufügen -->
+    <h2>Song-Suche</h2>
+    <!-- Weitere Inhalte und das Suchformular hier einfügen -->
+  </div>
+</div>
+
 <!-- Sidebar -->
 <ul class="navbar-nav sidebar sidebar-dark accordion toggled" style="background-color: #171c45" id="accordionSidebar">
 
@@ -61,6 +77,10 @@
             <i class="fas fa-chart-bar"></i>
             <span class="menunavcolor">Statistik</span>
         </a>
+        <a href="songsearch.php" class="bloc-icon">
+            <i class="fas fa-search"></i>
+            <span class="menunavcolor">Suchen</span>
+        </a>
         <a href="liederadd.php" class="bloc-icon">
             <i class="fas fa-edit"></i>
             <span class="menunavcolor">Bearbeiten</span>
@@ -70,7 +90,6 @@
             <span class="menunavcolor">Logout</span>
         </a>
     </nav>
-
 
 </ul>
 
@@ -133,3 +152,25 @@
         }
     }
 </style>
+<script>
+// JavaScript-Code
+// Funktion, um das Modalfenster zu öffnen
+function openModal() {
+  var modal = document.getElementById("myModal");
+  modal.style.display = "block";
+}
+
+// Funktion, um das Modalfenster zu schließen
+function closeModal() {
+  var modal = document.getElementById("myModal");
+  modal.style.display = "none";
+}
+
+// Eventlistener, um das Modalfenster zu öffnen, wenn auf den "Suchen"-Link geklickt wird
+var suchenLink = document.querySelector(".bloc-icon a[href='songsearch.php']");
+suchenLink.addEventListener("click", openModal);
+
+// Eventlistener, um das Modalfenster zu schließen, wenn auf das Schließen-Symbol geklickt wird
+var closeModalButton = document.getElementById("closeModal");
+closeModalButton.addEventListener("click", closeModal);
+</script>
