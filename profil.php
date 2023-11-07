@@ -2,6 +2,10 @@
 include 'datenbank.php';
 include 'auth.php';
 
+//Code für bessere Fehlersuche
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
+
 $message = ""; // Variable für die Meldung
 
 if (isset($_POST['submit'])) {
@@ -25,7 +29,7 @@ if (isset($_POST['submit'])) {
 }
 
 // Rollenabfrage
-session_start();
+//session_start();
 $benutzername = $_SESSION['benutzername'];
 
 // Überprüfen, ob der aktuelle Benutzer die ID 1 hat
@@ -48,39 +52,6 @@ if ($result->num_rows > 0) {
         while ($rowAndereMitglieder = $resultAndereMitglieder->fetch_assoc()) {
             $andereMitglieder[] = $rowAndereMitglieder['benutzername'];
         }
-    }
-}
-
-// Bearbeiten und Löschen von Benutzern
-if (isset($_POST['edit'])) {
-    $editBenutzerID = $_POST['editBenutzerID'];
-
-    // Code für die Bearbeitung des Benutzers
-    if (isset($_POST['neuesPasswort'])) {
-        $neuesPasswort = $_POST['neuesPasswort'];
-        $hashPasswort = password_hash($neuesPasswort, PASSWORD_DEFAULT);
-        $sqlBearbeiten = "UPDATE benutzer SET passwort = '$hashPasswort' WHERE id = $editBenutzerID";
-
-        if ($conn->query($sqlBearbeiten) === TRUE) {
-            $message = "Passwort des Benutzers mit ID $editBenutzerID erfolgreich bearbeitet.";
-        } else {
-            $message = "Fehler beim Bearbeiten des Passworts des Benutzers: " . $conn->error;
-        }
-    } else {
-        $message = "Bitte geben Sie ein neues Passwort ein.";
-    }
-}
-
-if (isset($_POST['delete'])) {
-    $deleteBenutzerID = $_POST['deleteBenutzerID'];
-
-    // Code für das Löschen des Benutzers
-    $sqlLoeschen = "DELETE FROM benutzer WHERE id = $deleteBenutzerID";
-
-    if ($conn->query($sqlLoeschen) === TRUE) {
-        $message = "Benutzer mit ID $deleteBenutzerID erfolgreich gelöscht.";
-    } else {
-        $message = "Fehler beim Löschen des Benutzers: " . $conn->error;
     }
 }
 
@@ -114,6 +85,25 @@ if (isset($_POST['upload'])) {
         $message = "Bitte wählen Sie eine Datei aus.";
     }
 }
+
+// Einloggen als anderer Benutzer
+if (isset($_GET['username'])) {
+    $benutzername = $_GET['username'];
+
+    // Überprüfen der Authentifizierung für den Benutzernamen
+    // ...
+
+    // Einloggen als Benutzer
+    session_start();
+    $_SESSION['benutzername'] = $benutzername;
+    // Weitere Informationen oder Berechtigungen in der Sitzung speichern
+    // ...
+
+    // Weiterleitung zur Profilseite des eingeloggten Benutzers
+    header("Location: profil.php");
+    exit();
+}
+
 ?>
 
 <div id="wrapper">
@@ -147,7 +137,11 @@ if (isset($_POST['upload'])) {
                                             $bild = $row['bild'];
                                             if (!empty($bild)) {
                                                 echo '<img style="border-radius: 5px" src="' . $bild . '" alt="Profilbild" width="200">';
+                                            } else {
+                                                echo '<img style="border-radius: 5px" src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png" alt="Profilbild" width="200">';
                                             }
+                                        } else {
+                                            echo '<img style="border-radius: 5px" src="https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png" alt="Profilbild" width="200">';
                                         }
                                         ?>
                                     </div>
@@ -214,6 +208,7 @@ if (isset($_POST['upload'])) {
                                 <?php foreach ($andereMitglieder as $mitglied): ?>
                                     <li>
                                         <?php echo $mitglied; ?>
+                                        <a href="profil.php?username=<?php echo $mitglied; ?>">Einloggen</a>
                                         <form method="POST" action="profil.php" style="display:inline-block;">
                                             <input type="hidden" name="editBenutzerID" value="<?php echo $mitglied; ?>">
                                             <button type="submit" name="edit" class="btn btn-link">Bearbeiten</button>
@@ -245,3 +240,4 @@ if (isset($_POST['upload'])) {
 
         </div>
     </div>
+</div>
