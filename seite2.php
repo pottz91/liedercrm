@@ -180,12 +180,24 @@ include 'anstehendelieder.php';
                         <div class="col-xl-6 col-md-6 mb-4">
                             <div class="card border-left-success shadow h-100 py-1">
                                 <div class="card-header shadow mb-1">
-                                    <div class="text-x font-weight-bold text-success text-uppercase mb-1">Lieder (Gesamt)</div>
+                                    <div class="text-x font-weight-bold text-success text-uppercase mb-1">Kalender</div>
+                                    <!--<div id="navigation">
+                                        <button id="prev">Vorherige Woche</button>
+                                        <button id="next">Nächste Woche</button>
+                                    </div>-->
                                 </div>
                                 <div class="col mr-2">
-                                    <div id="chart"></div>
+                                    <div class="scrollable-list">    
+                                        <!--<div id="chart"></div>-->
+                                        <style>
+                                            #calendar {
+                                                height: 400px; /* Hier die gewünschte Höhe in Pixeln eintragen */
+                                            }
+                                        </style>
+                                        <?php include 'calender.php'?>
+                                    </div>
                                 </div>
-                            </div>
+                            </div>    
                         </div>
 
                         <?php
@@ -230,6 +242,7 @@ include 'anstehendelieder.php';
                                             <div class="scrollable-list">
                                                 <ul class="list-unstyled">
                                                     <?php
+                                                    include 'datenbank.php';
                                                     // SQL-Abfrage ausführen, um die Gesamtzahl der Abspielungen der Lieder zu erhalten
                                                     $sql = "SELECT lieder.name, SUM(abspielungen.gesamt_abspielungen) AS gesamt_abspielungen
                                     FROM lieder
@@ -304,6 +317,7 @@ include 'anstehendelieder.php';
 
     <script>
         <?php
+
         // SQL-Abfrage ausführen, um die Liederdaten zu erhalten
         $sql = "SELECT DATE_FORMAT(hinzugefuegt_am, '%Y-%m-%d') AS datum, COUNT(*) AS anzahl FROM lieder GROUP BY datum";
         $result = $conn->query($sql);
